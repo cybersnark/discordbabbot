@@ -56,11 +56,13 @@ const diapStash = sequelize.define('diaperstash', {
  * @returns {string} - The corresponding name of the diaper.
  */
 
-// This function will convert the value of the user's choice into a more user friendly string for the reply.
-// May change this later.  This is a bit of a mess.  The brand names in the database probably can contain spaces.
-// I should probably change the database to use the same names as the choices.
+/** 
+ *This function will convert the value of the user's choice into a more user friendly string for the reply.  Will return a pluralized string if the quantity is greater than 1.
+ *May change this later.  This is a bit of a mess.
+ *I should probably change the database to use the same names as the choices.
+ *There might be a better way to store all of the brand names in a specific database table and then reference that table.  This would allow it to scale better.
+ */
 
-// This function will pluralize brand names if the quantity is greater than 1.  Otherwise, it will return the singular form.
 function valueToName(brand, quantity) {
 	switch (brand) {
 	case 'peekABU':
@@ -263,7 +265,6 @@ module.exports = {
 			}
 			// Sync the database to commit changes
 			await diapStash.sync();
-			// TODO: Create a function to translate the value of the user's choice into a more user friendly string for the reply.
 			await interaction.reply({ content: `You have added ${choiceQuantity} ${valueToName(choiceBrand, choiceQuantity)} to your diaper stash.`, ephemeral: true });
 		}
 		if (interaction.options.getSubcommand() === 'remove') {
