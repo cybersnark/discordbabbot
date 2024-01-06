@@ -56,7 +56,7 @@ const diapStash = sequelize.define('diaperstash', {
  * @returns {string} - The corresponding name of the diaper.
  */
 
-/** 
+/**
  *This function will convert the value of the user's choice into a more user friendly string for the reply.  Will return a pluralized string if the quantity is greater than 1.
  *May change this later.  This is a bit of a mess.
  *I should probably change the database to use the same names as the choices.

@@ -2,42 +2,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
-const Sequelize = require('sequelize');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
-const sequelize = new Sequelize('database', 'user', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite',
-	logging: false,
-	// SQLite only
-	storage: 'babdb.sqlite',
-});
-
-const userdb = sequelize.define('user', {
-	name: {
-		type: Sequelize.STRING,
-		unique: true,
-	},
-});
-const diapStash = sequelize.define('diaperstash', {
-	name: {
-		type: Sequelize.STRING,
-		allowNull: false,
-	},
-	brand: {
-		type: Sequelize.STRING,
-		allowNull: false,
-	},
-	quantity: {
-		type: Sequelize.INTEGER,
-		defaultValue: 0,
-		allowNull: false,
-	},
-});
 
 for (const folder of commandFolders) {
 	const commandsPath = path.join(foldersPath, folder);
@@ -55,8 +25,6 @@ for (const folder of commandFolders) {
 }
 
 client.once(Events.ClientReady, readyClient => {
-	userdb.sync();
-	diapStash.sync();
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
