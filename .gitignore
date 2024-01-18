@@ -2,3 +2,6 @@ node_modules/
 config.json
 *.sqlite
 .eslintrc.json
+babDiscordBot.code-workspace
+commands/utility/diaperstash.js.old
+.gitignore

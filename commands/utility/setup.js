@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
-const Sequelize = require('sequelize');
 const database = require('../../database.js');
+
+/*
 
 const sequelize = new Sequelize('database', 'user', 'password', {
 	host: 'localhost',
@@ -10,7 +11,7 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 	// SQLite only
 	storage: 'babdb.sqlite',
 });
-
+*/
 
 module.exports = {
 	data: new SlashCommandBuilder()

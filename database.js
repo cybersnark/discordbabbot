@@ -6,7 +6,7 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 	freezetableName: true,
 	logging: false,
 	// SQLite only
-	storage: 'babdb.sqlite',
+	storage: './db/babdb.sqlite',
 });
 
 module.exports = {
@@ -25,6 +25,14 @@ module.exports = {
 			type: Sequelize.STRING,
 			allowNull: false,
 		},
+		/*
+		print: {
+			type: Sequelize.STRING,
+			allowNull: false,
+		},
+		color: {
+			type: Sequelize.STRING,
+		},*/
 		quantity: {
 			type: Sequelize.INTEGER,
 			defaultValue: 0,
@@ -49,9 +57,6 @@ module.exports = {
 			type: Sequelize.BOOLEAN,
 		},
 		messy: {
-			type: Sequelize.BOOLEAN,
-		},
-		sticky: {
 			type: Sequelize.BOOLEAN,
 		},
 		changetime: {

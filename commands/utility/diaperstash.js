@@ -1,146 +1,11 @@
 const { SlashCommandBuilder } = require('discord.js');
+const _ = require('lodash');
+const valueToName = require('../../functions/valueToName.js');
 const Sequelize = require('sequelize');
+const padding = require('../../config/padding.json');
+const database = require('../../database.js');
 
-// Set up the database connection
-const sequelize = new Sequelize('database', 'user', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite',
-	freezetableName: true,
-	logging: false,
-	// SQLite only
-	storage: 'babdb.sqlite',
-});
-
-/**
- * Represents the user database model.
- * @typedef {Object} userdb
- * @property {string} name - The name of the user.
- */
-
-
-const userdb = sequelize.define('user', {
-	name: {
-		type: Sequelize.STRING,
-		unique: true,
-	},
-});
-
-/**
- * Represents a diaper stash.
- * @typedef {Object} DiaperStash
- * @property {string} name - The name of the diaper stash.
- * @property {string} brand - The brand of the diapers in the stash.
- * @property {number} quantity - The quantity of diapers in the stash.
- */
-
-const diapStash = sequelize.define('diaperstash', {
-	name: {
-		type: Sequelize.STRING,
-		allowNull: false,
-	},
-	brand: {
-		type: Sequelize.STRING,
-		allowNull: false,
-	},
-	quantity: {
-		type: Sequelize.INTEGER,
-		defaultValue: 0,
-		allowNull: false,
-	},
-});
-
-/**
- * Converts a diaper brand and quantity to a corresponding name.
- * @param {string} brand - The brand of the diaper.
- * @param {number} quantity - The quantity of the diaper.
- * @returns {string} - The corresponding name of the diaper.
- */
-
-/**
- *This function will convert the value of the user's choice into a more user friendly string for the reply.  Will return a pluralized string if the quantity is greater than 1.
- *May change this later.  This is a bit of a mess.
- *I should probably change the database to use the same names as the choices.
- *There might be a better way to store all of the brand names in a specific database table and then reference that table.  This would allow it to scale better.
- */
-
-function valueToName(brand, quantity) {
-	switch (brand) {
-	case 'peekABU':
-		if (quantity === 1) {
-			return 'PeekABU';
-		}
-		else {
-			return 'PeekABUs';
-		}
-	case 'space':
-		if (quantity === 1) {
-			return 'Space';
-		}
-		else {
-			return 'Spaces';
-		}
-	case 'pawz':
-		return 'Little Pawz';
-	case 'simple':
-		if (quantity === 1) {
-			return 'Simple';
-		}
-		else {
-			return 'Simples';
-		}
-	case 'preschool':
-		if (quantity === 1) {
-			return 'PreSchool';
-		}
-		else {
-			return 'PreSchools';
-		}
-	case 'cushies':
-		if (quantity === 1) {
-			return 'Cushies';
-		}
-		else {
-			return 'Cushies';
-		}
-	case 'sdk':
-		return 'Super Dry Kids';
-	case 'overnights':
-		if (quantity === 1) {
-			return 'Overnight';
-		}
-		else {
-			return 'Overnights';
-		}
-	case 'cammies':
-		return 'Cammies';
-	case 'galactic':
-		if (quantity === 1) {
-			return 'Galactic';
-		}
-		else {
-			return 'Galactics';
-		}
-	case 'littleBuilders':
-		return 'Little Builders';
-	case 'unicorn':
-		if (quantity === 1) {
-			return 'Unicorn';
-		}
-		else {
-			return 'Unicorns';
-		}
-	case 'littleRawrs':
-		return 'Little Rawrs';
-	case 'trestElites':
-		if (quantity === 1) {
-			return 'Trest Elite';
-		}
-		else {
-			return 'Trest Elites';
-		}
-	}
-}
-
+const paddingList = _.uniq(Object.values(padding.Diapers).map(brand => brand.name));
 module.exports = {
 	data: new SlashCommandBuilder()
 	// Set up the base diaperstash command
@@ -154,25 +19,9 @@ module.exports = {
 				.addStringOption(option =>
 					option
 						.setName('brand')
-						.setDescription('The brand of diaper to add.')
+						.setDescription('The type of diaper to add.')
 						.setRequired(true)
-						// Add the choices for the brands, will need to be updated as new brands are added.
-						.addChoices(
-							{ name: 'PeekABU', value: 'peekABU' },
-							{ name: 'Space', value: 'space' },
-							{ name: 'Little Pawz', value: 'pawz' },
-							{ name: 'Simple', value: 'simple' },
-							{ name: 'PreSchool', value: 'preschool' },
-							{ name: 'Cushies', value: 'cushies' },
-							{ name: 'Super Dry Kids', value: 'sdk' },
-							{ name: 'Overnights', value: 'overnights' },
-							{ name: 'Cammies', value: 'cammies' },
-							{ name: 'Galactic', value: 'galactic' },
-							{ name: 'Little Builders', value: 'littleBuilders' },
-							{ name: 'Unicorn', value: 'unicorn' },
-							{ name: 'Little Rawrs', value: 'littleRawrs' },
-							{ name: 'Trest Elites', value: 'trestElites' },
-						),
+						.setAutocomplete(true),
 				)
 				.addIntegerOption(option =>
 					option
@@ -183,7 +32,6 @@ module.exports = {
 						.setRequired(true)
 						.setMinValue(1)
 						.setMaxValue(180),
-
 				))
 		.addSubcommand(subcommand =>
 			subcommand
@@ -195,23 +43,7 @@ module.exports = {
 						.setName('brand')
 						.setDescription('The brand of diaper to remove.')
 						.setRequired(true)
-						// Add the choices for the brands, will need to be updated as new brands are added.
-						.addChoices(
-							{ name: 'PeekABU', value: 'peekABU' },
-							{ name: 'Space', value: 'space' },
-							{ name: 'Little Pawz', value: 'pawz' },
-							{ name: 'Simple', value: 'simple' },
-							{ name: 'PreSchool', value: 'preschool' },
-							{ name: 'Cushies', value: 'cushies' },
-							{ name: 'Super Dry Kids', value: 'sdk' },
-							{ name: 'Overnights', value: 'overnights' },
-							{ name: 'Cammies', value: 'cammies' },
-							{ name: 'Galactic', value: 'galactic' },
-							{ name: 'Little Builders', value: 'littleBuilders' },
-							{ name: 'Unicorn', value: 'unicorn' },
-							{ name: 'Little Rawrs', value: 'littleRawrs' },
-							{ name: 'Trest Elites', value: 'trestElites' },
-						),
+						.setAutocomplete(true),
 				)
 				.addIntegerOption(option =>
 					option
@@ -230,15 +62,49 @@ module.exports = {
 				.setName('list')
 				.setDescription('Displays your current diaper stash'),
 		),
+	async autocomplete(interaction) {
+		// To overcome the 25 string option limit, we can use the autocomplete feature to dynamically generate the list of options.
+		console.log('Autocomplete Test');
+		const focusedOption = interaction.options.getFocused(true);
+		const printChoices = [...paddingList];
+		const userChoices = await database.diapStash.findAll({
+			raw: true,
+			attributes: ['name', 'brand', 'quantity'],
+			where: {
+				name: interaction.user.username,
+				quantity: {
+					[Sequelize.Op.gt]: 0,
+				},
+			},
+		});
+		let choices;
+		if (focusedOption.name === 'brand' && interaction.options.getSubcommand() === 'add') {
+			choices = (printChoices);
+		}
+		else if (focusedOption.name === 'brand' && interaction.options.getSubcommand() === 'remove') {
+			choices = userChoices.map(t => t.brand);
+		}
+		let filtered;
+		console.log(focusedOption.value);
+		if (focusedOption.value === '' || focusedOption.value === null || focusedOption.value === undefined) {
+			filtered = choices.slice(0, 24);
+		}
+		else {
+			filtered = choices.filter(choice => choice.toLowerCase().startsWith(focusedOption.value.toLowerCase()));
+		}
+		await interaction.respond(
+			filtered.map(choice => ({ name: choice, value: choice })),
+		);
+	},
 	async execute(interaction) {
 		if (interaction.options.getSubcommand() === 'add') {
 			// Get the user's input for brand and quantity
 			const choiceBrand = interaction.options.getString('brand');
 			const choiceQuantity = interaction.options.getInteger('quantity');
 			// Is the user registered?
-			const registeredUser = await userdb.findOne({ where: { name: interaction.user.username } });
+			const registeredUser = await database.userdb.findOne({ where: { name: interaction.user.username } });
 			// Find the row that we're updating based on the name and brand selected
-			const user = await diapStash.findOne({ where: { name: interaction.user.username, brand: choiceBrand } });
+			const user = await database.diapStash.findOne({ where: { name: interaction.user.username, brand: choiceBrand } });
 			if (!registeredUser) {
 				await interaction.reply({ content: 'Oops! Looks like you\'re not registered, kiddo! Use /register to get started!', ephemeral: true });
 			}
@@ -250,31 +116,31 @@ module.exports = {
 			}
 			// If this is the first time a user has added a diaper of this brand to their stash, create a new row.
 			if (!user || !user.brand) {
-				await diapStash.create({
+				await database.diapStash.create({
 					name: interaction.user.username,
 					brand: choiceBrand,
 					quantity: choiceQuantity,
 				});
 				// Sync the database to commit changes
-				await diapStash.sync();
+				await database.diapStash.sync();
 				return interaction.reply({ content: `You have added ${choiceQuantity} ${valueToName(choiceBrand, choiceQuantity)} to your diaper stash.`, ephemeral: true });
 			}
 			// If the user already has a row for this brand, increment the quantity by the user's input instead.
 			else if (user.quantity >= 0) {
-				await diapStash.increment({ 'quantity': choiceQuantity }, { where: { name: interaction.user.username, brand: choiceBrand } });
+				await database.diapStash.increment({ 'quantity': choiceQuantity }, { where: { name: interaction.user.username, brand: choiceBrand } });
 			}
 			// Sync the database to commit changes
-			await diapStash.sync();
+			await database.diapStash.sync();
 			await interaction.reply({ content: `You have added ${choiceQuantity} ${valueToName(choiceBrand, choiceQuantity)} to your diaper stash.`, ephemeral: true });
 		}
 		if (interaction.options.getSubcommand() === 'remove') {
 			// Get the user's input for brand and quantity
-			const choiceBrand = interaction.options.getString('brand');
+			const choiceBrand = interaction.options.getString('removeprint');
 			const choiceQuantity = interaction.options.getInteger('quantity');
 			// Is the user registered?
-			const registeredUser = await userdb.findOne({ where: { name: interaction.user.username } });
+			const registeredUser = await database.userdb.findOne({ where: { name: interaction.user.username } });
 			// Find the row that we're updating based on the name and brand selected
-			const user = await diapStash.findOne({ where: { name: interaction.user.username, brand: choiceBrand } });
+			const user = await database.diapStash.findOne({ where: { name: interaction.user.username, brand: choiceBrand } });
 			if (!registeredUser) {
 				await interaction.reply({ content: 'Oops! Looks like you\'re not registered, kiddo! Use /register to get started!', ephemeral: true });
 			}
@@ -290,13 +156,13 @@ module.exports = {
 				return interaction.reply({ content: 'You can\'t remove more diapers than you have.', ephemeral: true });
 			}
 
-			await diapStash.decrement({ 'quantity': choiceQuantity }, { where: { name: interaction.user.username, brand: choiceBrand } });
-			await diapStash.sync();
+			await database.diapStash.decrement({ 'quantity': choiceQuantity }, { where: { name: interaction.user.username, brand: choiceBrand } });
+			await database.diapStash.sync();
 			await interaction.reply({ content: `You have removed  ${choiceQuantity} ${valueToName(choiceBrand, choiceQuantity)} from your stash.`, ephemeral: true });
 		}
 		if (interaction.options.getSubcommand() === 'list') {
 			// Find all rows where the user has more than 0 of a given diaper.
-			const currentStash = await diapStash.findAll({
+			const currentStash = await database.diapStash.findAll({
 				attributes: ['name', 'brand', 'quantity'],
 				where: {
 					name: interaction.user.username,

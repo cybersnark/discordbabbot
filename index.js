@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
-const { token } = require('./config.json');
+const { token } = require('./config/config.json');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -29,25 +29,34 @@ client.once(Events.ClientReady, readyClient => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
-	if (!interaction.isChatInputCommand()) return;
-	const commandName = interaction.client.commands.get(interaction.commandName);
-
-	if (commandName === 'register') {
-		await commandName.execute(interaction);
-	}
-	if (!commandName) {
-		console.error(`No command matching ${interaction.commandName} was found.`);
-	}
-	try {
-		await commandName.execute(interaction);
-	}
-	catch (error) {
-		console.error(error);
-		if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+	if (interaction.isChatInputCommand()) {
+		const command = interaction.client.commands.get(interaction.commandName);
+		if (command === 'register') {
+			await command.execute(interaction);
 		}
-		else {
-			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		if (!command) {
+			console.error(`No command matching ${interaction.commandName} was found.`);
+		}
+		try {
+			await command.execute(interaction);
+		}
+		catch (error) {
+			console.error(error);
+			if (interaction.replied || interaction.deferred) {
+				await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+			}
+			else {
+				await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+			}
+		}
+	}
+	else if (interaction.isAutocomplete()) {
+		const command = interaction.client.commands.get(interaction.commandName);
+		try {
+			await command.autocomplete(interaction);
+		}
+		catch (error) {
+			console.error(error);
 		}
 	}
 });

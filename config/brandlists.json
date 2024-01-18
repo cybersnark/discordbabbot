@@ -1,0 +1,212 @@
+[
+    {
+        "brand": "PeekABU",
+        "createdAt": "2024-01-06 00:09:30.899 +00:00",
+        "id": 1,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.899 +00:00"
+    },
+    {
+        "brand": "Space",
+        "createdAt": "2024-01-06 00:09:30.899 +00:00",
+        "id": 2,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.899 +00:00"
+    },
+    {
+        "brand": "Simple",
+        "createdAt": "2024-01-06 00:09:30.899 +00:00",
+        "id": 3,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.899 +00:00"
+    },
+    {
+        "brand": "Super Dry Kids",
+        "createdAt": "2024-01-06 00:09:30.899 +00:00",
+        "id": 4,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.899 +00:00"
+    },
+    {
+        "brand": "Little Pawz",
+        "createdAt": "2024-01-06 00:09:30.899 +00:00",
+        "id": 5,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.899 +00:00"
+    },
+    {
+        "brand": "PreSchool",
+        "createdAt": "2024-01-06 00:09:30.899 +00:00",
+        "id": 6,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.899 +00:00"
+    },
+    {
+        "brand": "Cushies",
+        "createdAt": "2024-01-06 00:09:30.899 +00:00",
+        "id": 7,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.899 +00:00"
+    },
+    {
+        "brand": "BunnyHopps",
+        "createdAt": "2024-01-06 00:09:30.899 +00:00",
+        "id": 8,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.899 +00:00"
+    },
+    {
+        "brand": "DinoRawrZ",
+        "createdAt": "2024-01-06 00:09:30.899 +00:00",
+        "id": 9,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.899 +00:00"
+    },
+    {
+        "brand": "Little Kings",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 10,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "AlphaGatorz",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 11,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Kiddo",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 12,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Tiny Tails",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 13,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Overnights",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 14,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Cammies",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 15,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Galactic",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 16,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Unicorn",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 17,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Little Rawrs",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 18,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Waddler",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 19,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Puppers",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 20,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Animooz",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 21,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Camelot",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 22,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Str8up",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 23,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Trest Elite",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 24,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Classico",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 25,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Bianco",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 26,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Magnifico",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 27,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Bellissimo",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 28,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Safari",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 29,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    },
+    {
+        "brand": "Princess Pink",
+        "createdAt": "2024-01-06 00:09:30.900 +00:00",
+        "id": 30,
+        "pluralName": null,
+        "updatedAt": "2024-01-06 00:09:30.900 +00:00"
+    }
+]
