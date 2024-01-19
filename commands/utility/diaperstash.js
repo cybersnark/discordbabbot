@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const _ = require('lodash');
-const valueToName = require('../../functions/valueToName.js');
+const { valueToName } = require('../../functions/valueToName.js');
 const Sequelize = require('sequelize');
 const padding = require('../../config/padding.json');
 const database = require('../../database.js');
