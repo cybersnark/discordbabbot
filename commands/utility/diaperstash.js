@@ -6,6 +6,7 @@ const padding = require('../../config/padding.json');
 const database = require('../../database.js');
 
 const paddingList = _.uniq(Object.values(padding.Diapers).map(brand => brand.name));
+
 module.exports = {
 	data: new SlashCommandBuilder()
 	// Set up the base diaperstash command
@@ -113,6 +114,9 @@ module.exports = {
 			}
 			else if (choiceQuantity < 1) {
 				return interaction.reply({ content: 'You can\'t add less than 1 diaper at a time.', ephemeral: true });
+			}
+			if (!paddingList.includes(choiceBrand)) {
+				return interaction.reply({ content: 'That\'s not a valid diaper brand.', ephemeral: true });
 			}
 			// If this is the first time a user has added a diaper of this brand to their stash, create a new row.
 			if (!user || !user.brand) {

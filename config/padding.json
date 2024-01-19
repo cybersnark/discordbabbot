@@ -2,229 +2,232 @@
     "Diapers": {
         "AlphaGatorz":{
             "name": "AlphaGatorz",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "BunnyHopps":{
             "name": "BunnyHopps",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "Cushies":{
             "name": "Cushies",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "DinoRawrZ":{
             "name": "DinoRawrZ",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "Kiddo":{
             "name": "Kiddo",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "LittleKings":{
             "name": "Little Kings",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "LittlePawz":{
             "name": "LittlePawz",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "PeekABU":{
             "name": "PeekABU",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "Simple":{
             "name": "Simple",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "SimpleUltra":{
             "name": "Simple Ultra",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "Space":{
             "name": "Space",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "SuperDryKids":{
             "name": "Super Dry Kids",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "TinyTails":{
             "name": "Tiny Tails",
-            "brand": "ABU",
-            "colors": null
+            "brand": "ABU"
         },
         "Animooz":{
             "name": "Animooz",
-            "brand": "Tykables",
-            "colors": null
+            "brand": "Tykables"
 
         },
         "Camelots":{
             "name": "Camelots",
-            "brand": "Tykables",
-            "colors": null
+            "brand": "Tykables"
         },
-        "Cammies":{
-            "name": "Cammies",
-            "brand": "Tykables",
-            "colors": ["Pink", "Blue"]
+        "Cammies (Pink)":{
+            "name": "Cammies (Pink)",
+            "brand": "Tykables"
+        },
+        "Cammies (Blue)":{
+            "name": "Cammies (Blue)",
+            "brand": "Tykables"
         },
         "Galactic":{
             "name": "Galactic",
-            "brand": "Tykables",
-            "colors": null
+            "brand": "Tykables"
         },
         "LittleRawrs":{
             "name": "Little Rawrs",
-            "brand": "Tykables",
-            "colors": null
+            "brand": "Tykables"
         },
         "LittleBuilders":{
             "name": "Little Builders",
-            "brand": "Tykables",
-            "colors": null
+            "brand": "Tykables"
         },
         "LittleRascals":{
             "name": "Little Rascals",
-            "brand": "Tykables",
-            "colors": null
+            "brand": "Tykables"
         },
         "Overnights":{
             "name": "Overnights",
-            "brand": "Tykables",
-            "colors": null
+            "brand": "Tykables"
         },
-        "PlayDayz":{
-            "name": "Play Dayz",
-            "brand": "Tykables",
-            "colors": ["Pink", "Blue"]
+        "PlayDayz (Pink)":{
+            "name": "PlayDayz (Pink)",
+            "brand": "Tykables"
+        },
+        "PlayDayz (Blue)":{
+            "name": "PlayDayz (Blue)",
+            "brand": "Tykables"
         },
         "Puppers":{
             "name": "Puppers",
-            "brand": "Tykables",
-            "colors": null
+            "brand": "Tykables"
         },
-        "Str8up":{
-            "name": "Str8up",
-            "brand": "Tykables",
-            "colors": ["Pink", "Blue"]
+        "Str8up (Pink)":{
+            "name": "Str8up (Pink)",
+            "brand": "Tykables"
+        },
+        "Str8up (Blue)":{
+            "name": "Str8up (Blue)",
+            "brand": "Tykables"
         },
         "Unicorn":{
             "name": "Unicorn",
-            "brand": "Tykables",
-            "colors": null
+            "brand": "Tykables"
         },
         "Waddler":{
             "name": "Waddler",
-            "brand": "Tykables",
-            "colors": null
+            "brand": "Tykables"
         },
         "Alpaca":{
             "name": "Alpaca",
-            "brand": "Rearz",
-            "colors": null
+            "brand": "Rearz"
         },
         "DayDreamers":{
             "name": "DayDreamers",
-            "brand": "Rearz",
-            "colors": null
+            "brand": "Rearz"
         },
         "Barnyard":{
             "name": "Barnyard",
-            "brand": "Rearz",
-            "colors": null
+            "brand": "Rearz"
         },
         "InspireInControl":{
             "name": "Inspire+ InControl",
-            "brand": "Rearz",
-            "colors": null
+            "brand": "Rearz"
         },
         "LilMonsters":{
             "name": "Lil Monsters",
-            "brand": "Rearz",
-            "colors": null
+            "brand": "Rearz"
         },
         "LilBella":{
             "name": "Lil Bella",
-            "brand": "Rearz",
-            "colors": null
+            "brand": "Rearz"
         },
-        "Rebel":{
-            "name": "Rebel",
-            "brand": "Rearz",
-            "colors": ["Black", "Pink"]
+        "Rebel (Black)":{
+            "name": "Rebel (Black)",
+            "brand": "Rearz"
+        },
+        "Rebel (Pink)":{
+            "name": "Rebel (Pink)",
+            "brand": "Rearz"
         },
         "Safari":{
             "name": "Safari",
-            "brand": "Rearz",
-            "colors": null
+            "brand": "Rearz"
         },
         "Seduction":{
             "name": "Seduction",
-            "brand": "Rearz",
-            "colors": null
+            "brand": "Rearz"
         },
-        "MegaMax":{
-            "name": "MegaMax",
-            "brand": "Northshore",
-            "colors": ["White", "Blue", "Pink", "Black", "Tie-Dye"]
+        "MegaMax (White)":{
+            "name": "MegaMax (White)",
+            "brand": "Northshore"
+        },
+        "MegaMax (Blue)":{
+            "name": "MegaMax (Blue)",
+            "brand": "Northshore"
+        },
+        "MegaMax (Pink)":{
+            "name": "MegaMax (Pink)",
+            "brand": "Northshore"
+        },
+        "MegaMax (Black)":{
+            "name": "MegaMax (Black)",
+            "brand": "Northshore"
+        },
+        "MegaMax (Tie-Dye)":{
+            "name": "MegaMax (Tie-Dye)",
+            "brand": "Northshore"
         },
         "Classico": {
             "name": "Classico",
-            "brand": "Bambino",
-            "colors": null
+            "brand": "Bambino"
         },
         "Bianco": {
             "name": "Bianco",
-            "brand": "Bambino",
-            "colors": null
+            "brand": "Bambino"
         },
         "Bellissimo": {
             "name": "Bellissimo",
-            "brand": "Bambino",
-            "colors": null
+            "brand": "Bambino"
         },
         "Magnifico": {
             "name": "Magnifico",
-            "brand": "Bambino",
-            "colors": null
+            "brand": "Bambino"
         },
         "Teddy": {
             "name": "Teddy",
-            "brand": "Bambino",
-            "colors": null
+            "brand": "Bambino"
         },
         "Bloomeez": {
             "name": "Bloomeez",
-            "brand": "Bambino",
-            "colors": null
+            "brand": "Bambino"
         },
         "Cloudee": {
             "name": "Cloudee",
-            "brand": "Bambino",
-            "colors": null
+            "brand": "Bambino"
         },
         "Catstronaut": {
             "name": "Catstronaut",
-            "brand": "Bambino",
-            "colors": null
+            "brand": "Bambino"
         },
-        "Trest": {
-            "name": "Trest Elite",
-            "brand": "Trest",
-            "colors": ["White", "Blue", "Pink", "Purple", "Green"]
+        "Trest (White)": {
+            "name": "Trest Elite (White)",
+            "brand": "Trest"
+        },
+        "Trest (Blue)": {
+            "name": "Trest Elite (Blue)",
+            "brand": "Trest"
+        },
+        "Trest (Pink)": {
+            "name": "Trest Elite (Pink)",
+            "brand": "Trest"
+        },
+        "Trest (Purple)": {
+            "name": "Trest Elite (Purple)",
+            "brand": "Trest"
+        },
+        "Trest (Green)": {
+            "name": "Trest Elite (Green)",
+            "brand": "Trest"
         }
     }         
 }
