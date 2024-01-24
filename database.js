@@ -25,14 +25,6 @@ module.exports = {
 			type: Sequelize.STRING,
 			allowNull: false,
 		},
-		/*
-		print: {
-			type: Sequelize.STRING,
-			allowNull: false,
-		},
-		color: {
-			type: Sequelize.STRING,
-		},*/
 		quantity: {
 			type: Sequelize.INTEGER,
 			defaultValue: 0,
@@ -78,9 +70,6 @@ module.exports = {
 		},
 		messy: {
 			type: Sequelize.STRING,
-		},
-		sticky: {
-			type: Sequelize.BOOLEAN,
 		},
 		lastChange: {
 			type: Sequelize.DATE,

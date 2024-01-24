@@ -11,8 +11,6 @@ module.exports = {
 	// Later, we can pull the diaper change history from the database and display it in a nice format, as well as allow users to change each other.
 		.setName('change')
 		.setDescription('Changes the diaper of the user.'),
-
-
 	async execute(interaction) {
 		const brands = await database.diapStash.findAll({
 			attributes: ['brand'],
@@ -135,9 +133,6 @@ module.exports = {
 		const brandFilter = i => {
 			return i.customId === 'brandMenu' && i.user.id === interaction.user.id;
 		};
-		const printFilter = i => {
-			return i.customId === 'printMenu' && i.user.id === interaction.user.id;
-		};
 		const wetFilter = i => {
 			return i.customId === 'wetMenu' && i.user.id === interaction.user.id;
 		};
@@ -148,36 +143,13 @@ module.exports = {
 			return i.customId === 'confirmButton' && i.user.id === interaction.user.id;
 		};
 		const brandCollector = await response.awaitMessageComponent({ filter: brandFilter, time: 60_000 });
-		const prints = await database.diapStash.findAll({
-			attributes: ['print'],
-			where: {
-				name: interaction.user.username,
-				brand: brands[0].brand,
-				quantity: {
-					[Sequelize.Op.gt]: 0,
-				},
-			},
-		});
-		const printOptions = prints.map(print => new StringSelectMenuOptionBuilder()
-			.setLabel(print.print + ' (' + print.quantity + ')')
-			.setValue(print.print),
-		);
-		const printMenu = new StringSelectMenuBuilder()
-			.setCustomId('printMenu')
-			.setPlaceholder('Pick a print!')
-			.addOptions(printOptions);
-		const row4 = new ActionRowBuilder()
-			.addComponents(
-				printMenu,
-			);
-		await brandCollector.update({ embeds: [brandEmbed], components: [row1, row4] });
-		const printCollector = await response.awaitMessageComponent({ filter: printFilter, time: 60_000 });
+		await brandCollector.update({ embeds: [brandEmbed], components: [row1] });
 		const wetEmbed = new EmbedBuilder()
 			.setDescription(
-				`That's a good choice! _he says as he pulls out the ${printCollector.values[0]} from the bag_ \n` + '_Ralsei sticks a finger in your legband and checks your diaper for wetness._')
+				`That's a good choice! _he says as he pulls out the ${brandCollector.values[0]} from the bag_ \n` + '_Ralsei sticks a finger in your legband and checks your diaper for wetness._')
 			.setColor('#f3ff88')
 			.setImage('https://i.imgur.com/JJ4KxbS.png');
-		await printCollector.update({ embeds: [wetEmbed], components: [row2] });
+		await brandCollector.update({ embeds: [wetEmbed], components: [row2] });
 		const wetCollector = await response.awaitMessageComponent({ filter: wetFilter, time: 60_000 });
 		const messyEmbed = new EmbedBuilder()
 			.setTitle(stringLibrary.Characters.Ralsei.Change.General.title)

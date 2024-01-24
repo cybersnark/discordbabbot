@@ -1,0 +1,37 @@
+{
+    "Characters":{
+        "Ralsei":{
+            "changeLogic": {
+                "diaperStatus": {
+                    "dry": {
+                        "changePriority": "0"
+                    },
+                    "damp": {
+                        "changePriority": "1"
+                    },
+                    "wet": {
+                        "changePriority": "4"
+                    },
+                    "soaked": {
+                        "changePriority": "7"
+                    },
+                    "leaking": {
+                        "changePriority": "10"
+                    },
+                    "clean": {
+                        "changePriority": "0"
+                    },
+                    "littleMessy": {
+                        "changePriority": "3"
+                    },
+                    "messy": {
+                        "changePriority": "6"
+                    },
+                    "veryMessy": {
+                        "changePriority": "10"
+                    }
+                }
+            }
+        }
+    }
+}
