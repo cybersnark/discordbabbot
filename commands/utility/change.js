@@ -12,74 +12,10 @@ module.exports = {
 		.setName('change')
 		.setDescription('Changes the diaper of the user.'),
 	async execute(interaction) {
-		const brands = await database.diapStash.findAll({
-			attributes: ['brand'],
-			where: {
-				name: interaction.user.username,
-				quantity: {
-					[Sequelize.Op.gt]: 0,
-				},
-			},
-		});
-		if (brands.length === 0) {
-			return interaction.reply({ content: 'Uh oh!  Looks like you\'re out of diapers!  You\'ll need to get some more before I can change you!', ephemeral: true });
-		}
 
-		const brandOptions = brands.map(brand => new StringSelectMenuOptionBuilder()
-			.setLabel(brand.brand)
-			.setValue(brand.brand),
-		);
-		const brandMenu = new StringSelectMenuBuilder()
-			.setCustomId('brandMenu')
-			.setPlaceholder('Pick a diaper from your stash!')
-			.addOptions(brandOptions);
 
-		const wetMenu = new StringSelectMenuBuilder()
-			.setCustomId('wetMenu')
-			.setPlaceholder('How wet is your diaper?')
-			.addOptions(
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Dry')
-					.setDescription('I\'m still dry!')
-					.setValue('Dry'),
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Damp')
-					.setDescription('I\'m a little damp...')
-					.setValue('Damp'),
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Wet')
-					.setDescription('I\'m wet!')
-					.setValue('Wet'),
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Soaked')
-					.setDescription('I\'m soaked!')
-					.setValue('Soaked'),
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Leaking')
-					.setDescription('Oh no!  I\'m leaking!')
-					.setValue('Leaking'),
-			);
-		const messyMenu = new StringSelectMenuBuilder()
-			.setCustomId('messyMenu')
-			.setPlaceholder('And how messy is your diaper?~')
-			.addOptions(
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Clean')
-					.setDescription('I\'m still clean!')
-					.setValue('Clean'),
-				new StringSelectMenuOptionBuilder()
-					.setLabel('A little messy')
-					.setDescription('I had a tiny accident!')
-					.setValue('littleMessy'),
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Kinda messy')
-					.setDescription('I had an accident but it\'s not too bad!')
-					.setValue('kindaMessy'),
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Very messy')
-					.setDescription('My diaper is very full!')
-					.setValue('veryMessy'),
-			);
+
+
 		/*
 		const stickyMenu = new StringSelectMenuBuilder()
 			.setCustomId('stickyMenu')
@@ -102,10 +38,7 @@ module.exports = {
 			.setLabel('Cancel Change')
 			.setStyle(ButtonStyle.Danger);
 
-		const row1 = new ActionRowBuilder()
-			.addComponents(
-				brandMenu,
-			);
+
 		const row2 = new ActionRowBuilder()
 			.addComponents(
 				wetMenu,
@@ -119,20 +52,9 @@ module.exports = {
 				confirmButton,
 				cancelButton,
 			);
-		const brandEmbed = new EmbedBuilder()
-			.setTitle('Select a brand')
-			.setDescription(stringLibrary.Characters.Ralsei.Change.General.brandSelect)
-			.setColor('#31a8f8')
-			.setImage('https://i.imgur.com/JJ4KxbS.png');
 
-		const response = await interaction.reply({
-			embeds: [brandEmbed],
-			components: [row1],
-			ephemeral: true });
 
-		const brandFilter = i => {
-			return i.customId === 'brandMenu' && i.user.id === interaction.user.id;
-		};
+
 		const wetFilter = i => {
 			return i.customId === 'wetMenu' && i.user.id === interaction.user.id;
 		};
@@ -142,7 +64,7 @@ module.exports = {
 		const confirmFilter = i => {
 			return i.customId === 'confirmButton' && i.user.id === interaction.user.id;
 		};
-		const brandCollector = await response.awaitMessageComponent({ filter: brandFilter, time: 60_000 });
+
 		await brandCollector.update({ embeds: [brandEmbed], components: [row1] });
 		const wetEmbed = new EmbedBuilder()
 			.setDescription(
