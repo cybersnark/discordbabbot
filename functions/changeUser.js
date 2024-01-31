@@ -1,7 +1,7 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder, ComponentType, EmbedBuilder } = require('discord.js');
-const database = require('../../database.js');
+const database = require('../database.js');
 const Sequelize = require('sequelize');
-const stringLibrary = require('../../config/stringLibrary.json');
+const stringLibrary = require('../config/stringLibrary.json');
 const wait = require('node:timers/promises').setTimeout;
 module.exports = async (client, interaction, args) => {
 	const brands = await database.diapStash.findAll({
@@ -86,6 +86,7 @@ module.exports = async (client, interaction, args) => {
 			brand: brandCollector.values[0],
 			wet: 'Dry',
 			messy: 'Clean',
+			booster: interaction.options.getString('boosterMenu'),
 			lastChange: new Date(),
 			lastUpdated: new Date(),
 		}, { where: { name: interaction.user.username } });
@@ -97,6 +98,8 @@ module.exports = async (client, interaction, args) => {
 		console.log(e);
 		return interaction.reply({ content: 'You didn\'t select an option in time!' });
 	}
+
+	// TODO: Let's break out these response blocks into a function
 	await response.followUp({ embeds: [responseEmbed], ephemeral: true });
 	await wait(3000);
 	responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.General.ChangeConfirm);

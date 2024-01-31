@@ -1,7 +1,10 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder, ComponentType, EmbedBuilder, SlashCommandUserOption } = require('discord.js');
+const { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder, ComponentType, EmbedBuilder, SlashCommandUserOption } = require('discord.js');
 const changeUser = require('../../functions/changeUser.js');
+const { GlobalFonts } = require('@napi-rs/canvas');
+const Canvas = require('@napi-rs/canvas');
 const stringLibrary = require('../../config/stringLibrary.json');
-const characterLogic = require('../../config/characterLogic.js');
+const characterLogic = require('../../config/characterLogic.json');
+const database = require('../../database.js');
 const wait = require('node:timers/promises').setTimeout;
 
 // TODO: Allow users to run this command on another user. If the user is not specified, the bot will assume the user is running the command on themselves.
@@ -14,8 +17,7 @@ module.exports = {
 			option
 				.setName('user')
 				.setDescription('The user to check the diaper status of.')
-				.setRequired(false)
-				.setAutocomplete(true),
+				.setRequired(false),
 		),
 	async execute(interaction) {
 		const user = interaction.options.getUser('user') ?? interaction.user;
@@ -26,23 +28,23 @@ module.exports = {
 				new StringSelectMenuOptionBuilder()
 					.setLabel('Dry')
 					.setDescription('I\'m still dry!')
-					.setValue('Dry'),
+					.setValue('dry'),
 				new StringSelectMenuOptionBuilder()
 					.setLabel('Damp')
 					.setDescription('I\'m a little damp...')
-					.setValue('Damp'),
+					.setValue('damp'),
 				new StringSelectMenuOptionBuilder()
 					.setLabel('Wet')
 					.setDescription('I\'m wet!')
-					.setValue('Wet'),
+					.setValue('wet'),
 				new StringSelectMenuOptionBuilder()
 					.setLabel('Soaked')
 					.setDescription('I\'m soaked!')
-					.setValue('Soaked'),
+					.setValue('soaked'),
 				new StringSelectMenuOptionBuilder()
 					.setLabel('Leaking')
 					.setDescription('Oh no!  I\'m leaking!')
-					.setValue('Leaking'),
+					.setValue('leaking'),
 			);
 		const messyMenu = new StringSelectMenuBuilder()
 			.setCustomId('messyMenu')
@@ -51,7 +53,7 @@ module.exports = {
 				new StringSelectMenuOptionBuilder()
 					.setLabel('Clean')
 					.setDescription('I\'m still clean!')
-					.setValue('Clean'),
+					.setValue('clean'),
 				new StringSelectMenuOptionBuilder()
 					.setLabel('A little messy')
 					.setDescription('I had a tiny accident!')
@@ -59,7 +61,7 @@ module.exports = {
 				new StringSelectMenuOptionBuilder()
 					.setLabel('Kinda messy')
 					.setDescription('I had an accident but it\'s not too bad!')
-					.setValue('kindaMessy'),
+					.setValue('messy'),
 				new StringSelectMenuOptionBuilder()
 					.setLabel('Very messy')
 					.setDescription('My diaper is very full!')
@@ -73,18 +75,27 @@ module.exports = {
 			.setCustomId('cancelButton')
 			.setLabel('No, I\'m fine!')
 			.setStyle(ButtonStyle.Danger);
+		GlobalFonts.registerFromPath('../../font/DeterminationMonoWebRegular-Z5oq.ttf');
+		const canvas = Canvas.createCanvas(909, 270);
+		const context = canvas.getContext('2d');
+		context.font = '32px Determination Mono Web';
+		context.fillStyle = '#ffffff';
+		const wetBackground = await Canvas.loadImage('https://i.imgur.com/Eu7oan4.png');
+		context.drawImage(wetBackground, 0, 0, canvas.width, canvas.height);
+		context.fillText(stringLibrary.Characters.Ralsei.Change.status.self.wet.check.text, 270, 96, 603);
+		const attachment = new AttachmentBuilder(await canvas.encode('png'), { name: 'wetBackground.png' });
 
 		const wetEmbed = new EmbedBuilder()
 			.setTitle('PLACEHOLDER - WET DIAPER QUERY')
-			.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.Wet.Check)
+			.setDescription(stringLibrary.Characters.Ralsei.Change.status.self.wet.check.text)
 			.setColor('#ebebeb');
 		const messyEmbed = new EmbedBuilder()
 			.setTitle('PLACEHOLDER - MESSY DIAPER QUERY')
-			.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.Messy.Check)
+			.setDescription(stringLibrary.Characters.Ralsei.Change.status.self.messy.check.text)
 			.setColor('#ebebeb');
 		const responseEmbed = new EmbedBuilder()
 			.setTitle('PLACEHOLDER - DIAPER CHANGE RESPONSE')
-			.setDescription(stringLibrary.Characters.Ralsei.Change.Response)
+			.setDescription(stringLibrary.Characters.Ralsei.Change.General.changeStart)
 			.setColor('#ebebeb');
 
 		// TODO: Depending on the selections the user made, the bot will send a message urging for the user to change their diaper.
@@ -103,9 +114,11 @@ module.exports = {
 				confirmButton,
 				cancelButton,
 			);
-		if (user == '' || user == null || user == undefined) {
+		if (user.id === interaction.user.id) {
+
+			// TODO: Let's add a separate response block here before diving into the status check. If the user is initiating a check on themselves, the response should be different than one that occurs on a schedule.
 			const response = await interaction.reply({
-				embeds: [wetEmbed],
+				files: [attachment],
 				components: [row1],
 				ephemeral: true });
 
@@ -127,35 +140,35 @@ module.exports = {
 
 			const wetCollector = await response.awaitMessageComponent({ filter: wetFilter, time: 60000 });
 			wetPriority = characterLogic.Characters.Ralsei.changeLogic.diaperStatus[wetCollector.values[0]].changePriority;
-			responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.Wet[wetCollector.values[0]].text);
-			responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.Wet[wetCollector.values[0]].image);
+			responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.status.self.wet[wetCollector.values[0]].text);
+			responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.status.self.wet[wetCollector.values[0]].image);
 			await wetCollector.update({ embeds: [responseEmbed, messyEmbed], components: [row2] });
 
 			const messyCollector = await response.awaitMessageComponent({ filter: messyFilter, time: 60000 });
 			messyPriority = characterLogic.Characters.Ralsei.changeLogic.diaperStatus[messyCollector.values[0]].changePriority;
-			responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.Messy[messyCollector.values[0]].text);
-			responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.Messy[messyCollector.values[0]].image);
+			responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.status.self.messy[messyCollector.values[0]].text);
+			responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.status.self.messy[messyCollector.values[0]].image);
 			await messyCollector.update({ embeds: [responseEmbed], components: [] });
-			await wait (5_000);
+			await wait (3_000);
 			if (wetPriority + messyPriority == 0) {
-				responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.NoChange);
-				responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.NoChangeImage);
+				responseEmbed.setDescription('PLACEHOLDER - NO CHANGE');
+				responseEmbed.setImage('https://i.imgur.com/JJ4KxbS.png');
 				shouldChange = false;
 
 			}
 			else if (wetPriority + messyPriority > 0 && wetPriority + messyPriority <= 3) {
-				responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.changeLowPriority);
-				responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.changeLowImage);
+				responseEmbed.setDescription('PLACEHOLDER - LOW PRIORITY CHANGE');
+				responseEmbed.setImage('https://i.imgur.com/JJ4KxbS.png');
 				shouldChange = false;
 			}
 			else if (wetPriority + messyPriority >= 4 && wetPriority + messyPriority <= 7) {
-				responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.changeMediumPriority);
-				responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.changeMediumImage);
+				responseEmbed.setDescription('PLACEHOLDER - MEDIUM PRIORITY CHANGE');
+				responseEmbed.setImage('https://i.imgur.com/JJ4KxbS.png');
 				shouldChange = true;
 			}
 			else if (wetPriority + messyPriority >= 8) {
-				responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.changeHighPriority);
-				responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.changeHighImage);
+				responseEmbed.setDescription('stringLibrary.Characters.Ralsei.Change.status.self.changeHighPriority');
+				responseEmbed.setImage('https://i.imgur.com/JJ4KxbS.png');
 				shouldChange = true;
 			}
 			if (shouldChange == false) {
@@ -178,9 +191,7 @@ module.exports = {
 		}
 		else {
 			const userStatus = await database.diapStatus.findOne({ where: { name: user.username } });
-			const wetStatus = userStatus.wet;
-			const messyStatus = userStatus.messy;
-
-			await interaction.reply({ content: `${user.username}'s diaper is ${wetStatus} and ${messyStatus}.`, ephemeral: true });
+			console.log(user);
+		}
 	},
 };

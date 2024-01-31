@@ -16,49 +16,49 @@
           "wet": {
             "check": {
               "text": "***Ralsei hooks a finger along the inside your leak guards, observing the front of your diaper for any faded indicators*** \\n **Let's see if you're wet...**",
-              "image": "PLACEHOLDER"
+              "image": "https://i.imgur.com/JJ4KxbS.png"
             },
             "dry": {
               "text": "***Ralsei gently prods a digit in your leg guards, checking for wetness. He raises his eyebrows in surprise*** \\n **Oh! Wow, I guess you're still dry, huh?**",
-              "image": "PLACEHOLDER"
+              "image": "https://i.imgur.com/JJ4KxbS.png"
             },
             "damp": {
               "text": "***Ralsei feels around for some wetness and notes any lightly faded indicators on your diaper*** \\n **Hmm, looks like you're a little damp, but not too bad!**",
-              "image": "PLACEHOLDER"
+              "image": "https://i.imgur.com/JJ4KxbS.png"
             },
             "wet": {
               "text": "***Ralsei gives a gentle squeeze to the front of your diaper, causing it to squish*** \\n **You're pretty wet!  We might want to change you soon before you leak!**",
-              "image": "PLACEHOLDER"
+              "image": "https://i.imgur.com/JJ4KxbS.png"
             },
             "soaked": {
               "text": "***Ralsei withdraws a finger from your diaper, noting the wetness on his finger as he gives a squeeze to your soggy diaper front*** \\n **Oh, wow, you're __soaked__!  That diaper's not going to hold any more, let's get you changed before you leak!**",
-              "image": "PLACEHOLDER"
+              "image": "https://i.imgur.com/JJ4KxbS.png"
             },
             "leaking": {
               "text": "***Ralsei presses a finger against the front of your diaper, noting the wetness on his finger as he gives a squeeze to your soggy diaper front.  As more wetness drips down to the floor, he gives a slightly worried expression.*** \\n **Oh, wow, you're __leaking__!  It's time to change before you leave an even bigger puddle!**",
-              "image": "PLACEHOLDER"
+              "image": "https://i.imgur.com/JJ4KxbS.png"
             }
           },
           "messy": {
             "check": {
               "text": "***Ralsei sniffs the air and tugs on the back of your diaper to check for any other accidents*** \\n **Now, let's check back here...**",
-              "image": "PLACEHOLDER"
+              "image": "https://i.imgur.com/JJ4KxbS.png"
             },
             "clean": {
               "text": "***Ralsei smiles and pats your diapered rear*** \\n **You're all clean back here!**",
-              "image": "PLACEHOLDER"
+              "image": "https://i.imgur.com/JJ4KxbS.png"
             },
             "littleMessy": {
               "text": "***Ralsei sniffs the air with a slight frown*** \\n **Hmm, looks like you had a little accident back here, huh... \\n It's not too bad, we probably could wait on a change for a little bit!**",
-              "image": "PLACEHOLDER"
+              "image": "https://i.imgur.com/JJ4KxbS.png"
             },
             "kindaMessy": {
               "text": "***Ralsei's nose wrinkles*** \\n **Oh, wow, you're pretty messy back here!  We should probably get you changed soon!** \\n *He says, giving a gentle squish to your diapered rear.*",
-              "image": "PLACEHOLDER"
+              "image": "https://i.imgur.com/JJ4KxbS.png"
             },
             "veryMessy": {
               "text": "***Ralsei's face scrunches and he pinches his nose*** \\n **Phew, I don't even need to check to know you're messy back here!  Come on, let's get you up on that changing table and cleaned up!**",
-              "image": "PLACEHOLDER"
+              "image": "https://i.imgur.com/JJ4KxbS.png"
             }
            }
          }
