@@ -27,6 +27,20 @@ module.exports = async (client, interaction, args) => {
 		.setPlaceholder('Pick a diaper from your stash!')
 		.addOptions(brandOptions);
 
+	const boosterMenu = new StringSelectMenuBuilder()
+		.setCustomId('boosterMenu')
+		.setPlaceholder('Do you want to add a booster?')
+		.addOptions(
+			new StringSelectMenuOptionBuilder()
+				.setLabel('Yes')
+				.setDescription('I want a booster!')
+				.setValue(true),
+			new StringSelectMenuOptionBuilder()
+				.setLabel('No')
+				.setDescription('I don\'t want a booster.')
+				.setValue(false),
+		);
+
 	const brandEmbed = new EmbedBuilder()
 		.setTitle('Select a brand')
 		.setDescription(stringLibrary.Characters.Ralsei.Change.General.brandSelect)
@@ -37,16 +51,65 @@ module.exports = async (client, interaction, args) => {
 		.addComponents(
 			brandMenu,
 		);
+	const row2 = new ActionRowBuilder()
+		.addComponents(
+			boosterMenu,
+		);
 
 	const response = await interaction.reply({
 		embeds: [brandEmbed],
-		components: [row1],
+		components: [row1, row2],
 		ephemeral: true });
-
+	const responseEmbed = new EmbedBuilder()
+		.setTitle('PLACEHOLDER - DIAPER CHANGE RESPONSE')
+		.setDescription(stringLibrary.Characters.Ralsei.Change.Response)
+		.setColor('#ebebeb');
 	const brandFilter = i => {
 		return i.customId === 'brandMenu' && i.user.id === interaction.user.id;
 	};
 
-    const brandCollector = await response.awaitMessageComponent({ filter: brandFilter, time: 60_000 });
-    
+	const brandCollector = await response.awaitMessageComponent({ filter: brandFilter, time: 60_000 });
+	responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.General.brandSelectResponse.replace('{brand}', brandCollector.values[0]));
+	try {
+		const currentDiap = await database.diapStatus.findOne({ attributes: ['brand'] }, { where: { name: interaction.user.username } });
+		await database.diapChangeTracker.create({
+			name: interaction.user.username,
+			previousBrand: currentDiap,
+			brand: brandCollector.values[0],
+			wet: interaction.options.getString('wetMenu'),
+			messy: interaction.options.getString('messyMenu'),
+			changetime: new Date(),
+		});
+		database.diapChangeTracker.save();
+
+		await database.diapStatus.update({
+			brand: brandCollector.values[0],
+			wet: 'Dry',
+			messy: 'Clean',
+			lastChange: new Date(),
+			lastUpdated: new Date(),
+		}, { where: { name: interaction.user.username } });
+		database.diapStatus.save();
+		await database.diapStash.decrement({ 'quantity': 1 }, { where: { name: interaction.user.username, brand: brandCollector.values[0] } });
+		database.diapStash.save();
+	}
+	catch (e) {
+		console.log(e);
+		return interaction.reply({ content: 'You didn\'t select an option in time!' });
+	}
+	await response.followUp({ embeds: [responseEmbed], ephemeral: true });
+	await wait(3000);
+	responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.General.ChangeConfirm);
+	responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.General.ChangeConfirmImage);
+	await response.edit({ embeds: [responseEmbed], components: [] });
+	await wait(1500);
+	responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.General.Change);
+	responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.General.ChangeImage);
+	await response.edit({ embeds: [responseEmbed], components: [] });
+	await wait(1500);
+	responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.General.ChangeComplete);
+	responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.General.ChangeCompleteImage);
+	await response.edit({ embeds: [responseEmbed], components: [] });
+
+
 };

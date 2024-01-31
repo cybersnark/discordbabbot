@@ -1,5 +1,5 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder, ComponentType, EmbedBuilder } = require('discord.js');
-const change = require('./change.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder, ComponentType, EmbedBuilder, SlashCommandUserOption } = require('discord.js');
+const changeUser = require('../../functions/changeUser.js');
 const stringLibrary = require('../../config/stringLibrary.json');
 const characterLogic = require('../../config/characterLogic.js');
 const wait = require('node:timers/promises').setTimeout;
@@ -9,8 +9,16 @@ const wait = require('node:timers/promises').setTimeout;
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('diapercheck')
-		.setDescription('Checks and updates the diaper status of the user.'),
+		.setDescription('Checks and updates the diaper status of the user.')
+		.addUserOption(option =>
+			option
+				.setName('user')
+				.setDescription('The user to check the diaper status of.')
+				.setRequired(false)
+				.setAutocomplete(true),
+		),
 	async execute(interaction) {
+		const user = interaction.options.getUser('user') ?? interaction.user;
 		const wetMenu = new StringSelectMenuBuilder()
 			.setCustomId('wetMenu')
 			.setPlaceholder('How wet is your diaper?')
@@ -95,83 +103,84 @@ module.exports = {
 				confirmButton,
 				cancelButton,
 			);
-		const response = await interaction.reply({
-			embeds: [wetEmbed],
-			components: [row1],
-			ephemeral: true });
-
-		const wetFilter = i => {
-			return i.customId === 'wetMenu' && i.user.id === interaction.user.id;
-		};
-		const messyFilter = i => {
-			return i.customId === 'messyMenu' && i.user.id === interaction.user.id;
-		};
-		const changeFilter = i => {
-			return (i.customId === 'confirmButton' || i.customId === 'cancelButton') && i.user.id === interaction.user.id;
-		};
-		//TODO: Add consideration for the user to add a booster
-		//If user has a booster, wetness will be reduced by 2 levels
-
-		let wetPriority = 0;
-		let messyPriority = 0;
-		let shouldChange = false;
-
-		const wetCollector = await response.awaitMessageComponent({ filter: wetFilter, time: 60000 });
-		wetPriority = characterLogic.Characters.Ralsei.changeLogic.diaperStatus[wetCollector.values[0]].changePriority;
-		responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.Wet[wetCollector.values[0]].text);
-		responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.Wet[wetCollector.values[0]].image);
-		await wetCollector.update({ embeds: [responseEmbed, messyEmbed], components: [row2] });
-
-		const messyCollector = await response.awaitMessageComponent({ filter: messyFilter, time: 60000 });
-		messyPriority = characterLogic.Characters.Ralsei.changeLogic.diaperStatus[messyCollector.values[0]].changePriority;
-		responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.Messy[messyCollector.values[0]].text);
-		responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.Messy[messyCollector.values[0]].image);
-		await messyCollector.update({ embeds: [responseEmbed], components: [] });
-		await wait (5_000);
-		if (wetPriority + messyPriority == 0) {
-			responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.NoChange);
-			responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.NoChangeImage);
-			shouldChange = false;
-
-		}
-		else if (wetPriority + messyPriority > 0 && wetPriority + messyPriority <= 3) {
-			responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.changeLowPriority);
-			responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.changeLowImage);
-			shouldChange = false;
-		}
-		else if (wetPriority + messyPriority >= 4 && wetPriority + messyPriority <= 7) {
-			responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.changeMediumPriority);
-			responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.changeMediumImage);
-			shouldChange = true;
-		}
-		else if (wetPriority + messyPriority >= 8) {
-			responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.changeHighPriority);
-			responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.changeHighImage);
-			shouldChange = true;
-		}
-		if (shouldChange == false) {
-			await interaction.followUp({
-				embeds: [responseEmbed],
+		if (user == '' || user == null || user == undefined) {
+			const response = await interaction.reply({
+				embeds: [wetEmbed],
+				components: [row1],
 				ephemeral: true });
-		}
-		if (shouldChange == true) {
-			await interaction.followUp({
-				embeds: [responseEmbed],
-				components: [row3],
-				ephemeral: true });
+
+			const wetFilter = i => {
+				return i.customId === 'wetMenu' && i.user.id === interaction.user.id;
+			};
+			const messyFilter = i => {
+				return i.customId === 'messyMenu' && i.user.id === interaction.user.id;
+			};
+			const changeFilter = i => {
+				return (i.customId === 'confirmButton' || i.customId === 'cancelButton') && i.user.id === interaction.user.id;
+			};
+			// TODO: Add consideration for the user to add a booster
+			// If user has a booster, wetness will be reduced by 2 levels
+
+			let wetPriority = 0;
+			let messyPriority = 0;
+			let shouldChange = false;
+
+			const wetCollector = await response.awaitMessageComponent({ filter: wetFilter, time: 60000 });
+			wetPriority = characterLogic.Characters.Ralsei.changeLogic.diaperStatus[wetCollector.values[0]].changePriority;
+			responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.Wet[wetCollector.values[0]].text);
+			responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.Wet[wetCollector.values[0]].image);
+			await wetCollector.update({ embeds: [responseEmbed, messyEmbed], components: [row2] });
+
+			const messyCollector = await response.awaitMessageComponent({ filter: messyFilter, time: 60000 });
+			messyPriority = characterLogic.Characters.Ralsei.changeLogic.diaperStatus[messyCollector.values[0]].changePriority;
+			responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.Messy[messyCollector.values[0]].text);
+			responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.Messy[messyCollector.values[0]].image);
+			await messyCollector.update({ embeds: [responseEmbed], components: [] });
+			await wait (5_000);
+			if (wetPriority + messyPriority == 0) {
+				responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.NoChange);
+				responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.NoChangeImage);
+				shouldChange = false;
+
+			}
+			else if (wetPriority + messyPriority > 0 && wetPriority + messyPriority <= 3) {
+				responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.changeLowPriority);
+				responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.changeLowImage);
+				shouldChange = false;
+			}
+			else if (wetPriority + messyPriority >= 4 && wetPriority + messyPriority <= 7) {
+				responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.changeMediumPriority);
+				responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.changeMediumImage);
+				shouldChange = true;
+			}
+			else if (wetPriority + messyPriority >= 8) {
+				responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.Status.Self.changeHighPriority);
+				responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.Status.Self.changeHighImage);
+				shouldChange = true;
+			}
+			if (shouldChange == false) {
+				await interaction.followUp({
+					embeds: [responseEmbed],
+					ephemeral: true });
+			}
+			if (shouldChange == true) {
+				await interaction.followUp({
+					embeds: [responseEmbed],
+					components: [row3],
+					ephemeral: true });
 				const changeCollector = await response.awaitMessageComponent({ filter: changeFilter, time: 60000 });
 				if (changeCollector.customId === 'confirmButton') {
 					await interaction.update({ embeds: [responseEmbed], components: [] });
-					//Do Change here
-					//change.DoChange(wetCollector.values[0], messyCollector.values[0]);
+					// Do Change here
+					changeUser(wetCollector.values[0], messyCollector.values[0]);
 				}
+			}
 		}
+		else {
+			const userStatus = await database.diapStatus.findOne({ where: { name: user.username } });
+			const wetStatus = userStatus.wet;
+			const messyStatus = userStatus.messy;
 
-
-
-		const cancelCollector = response.awaitMessageComponent({ filter: cancelFilter, time: 60000 });
-		if 
-
-
+			await interaction.reply({ content: `${user.username}'s diaper is ${wetStatus} and ${messyStatus}.`, ephemeral: true });
 	},
 };
