@@ -5,6 +5,7 @@ const Canvas = require('@napi-rs/canvas');
 const stringLibrary = require('../../config/stringLibrary.json');
 const characterLogic = require('../../config/characterLogic.json');
 const database = require('../../database.js');
+const { characterMessage } = require('../../functions/characterMessage.js');
 const wait = require('node:timers/promises').setTimeout;
 
 // TODO: Allow users to run this command on another user. If the user is not specified, the bot will assume the user is running the command on themselves.
@@ -75,15 +76,9 @@ module.exports = {
 			.setCustomId('cancelButton')
 			.setLabel('No, I\'m fine!')
 			.setStyle(ButtonStyle.Danger);
-		GlobalFonts.registerFromPath('../../font/DeterminationMonoWebRegular-Z5oq.ttf');
-		const canvas = Canvas.createCanvas(909, 270);
-		const context = canvas.getContext('2d');
-		context.font = '32px Determination Mono Web';
-		context.fillStyle = '#ffffff';
-		const wetBackground = await Canvas.loadImage('https://i.imgur.com/Eu7oan4.png');
-		context.drawImage(wetBackground, 0, 0, canvas.width, canvas.height);
-		context.fillText(stringLibrary.Characters.Ralsei.Change.status.self.wet.check.text, 270, 96, 603);
-		const attachment = new AttachmentBuilder(await canvas.encode('png'), { name: 'wetBackground.png' });
+
+		let attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.status.self.wet.check.text, stringLibrary.Characters.Ralsei.Change.status.self.wet.check.image);
+		let attachment = new AttachmentBuilder(attachmentImage, { name: 'diaperStatus.png' });
 
 		const wetEmbed = new EmbedBuilder()
 			.setTitle('PLACEHOLDER - WET DIAPER QUERY')
@@ -139,50 +134,50 @@ module.exports = {
 			let shouldChange = false;
 
 			const wetCollector = await response.awaitMessageComponent({ filter: wetFilter, time: 60000 });
+			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.status.self.wet[wetCollector.values[0]].text, stringLibrary.Characters.Ralsei.Change.status.self.wet[wetCollector.values[0]].image);
+			attachment = new AttachmentBuilder(attachmentImage, { name: 'diaperStatus.png' });
 			wetPriority = characterLogic.Characters.Ralsei.changeLogic.diaperStatus[wetCollector.values[0]].changePriority;
-			responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.status.self.wet[wetCollector.values[0]].text);
-			responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.status.self.wet[wetCollector.values[0]].image);
-			await wetCollector.update({ embeds: [responseEmbed, messyEmbed], components: [row2] });
+			await wetCollector.update({ files:[attachment], components: [row2] });
 
 			const messyCollector = await response.awaitMessageComponent({ filter: messyFilter, time: 60000 });
 			messyPriority = characterLogic.Characters.Ralsei.changeLogic.diaperStatus[messyCollector.values[0]].changePriority;
-			responseEmbed.setDescription(stringLibrary.Characters.Ralsei.Change.status.self.messy[messyCollector.values[0]].text);
-			responseEmbed.setImage(stringLibrary.Characters.Ralsei.Change.status.self.messy[messyCollector.values[0]].image);
-			await messyCollector.update({ embeds: [responseEmbed], components: [] });
+			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.status.self.messy[messyCollector.values[0]].text, stringLibrary.Characters.Ralsei.Change.status.self.messy[messyCollector.values[0]].image);
+			attachment = new AttachmentBuilder(attachmentImage, { name: 'diaperStatus.png' });
+			await messyCollector.update({ files:[attachment], components: [] });
 			await wait (3_000);
 			if (wetPriority + messyPriority == 0) {
-				responseEmbed.setDescription('PLACEHOLDER - NO CHANGE');
-				responseEmbed.setImage('https://i.imgur.com/JJ4KxbS.png');
+				attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.priority.nochange.text, stringLibrary.Characters.Ralsei.Change.priority.nochange.image);
+				attachment = new AttachmentBuilder(attachmentImage, { name: 'changePriority.png' });
 				shouldChange = false;
-
 			}
 			else if (wetPriority + messyPriority > 0 && wetPriority + messyPriority <= 3) {
-				responseEmbed.setDescription('PLACEHOLDER - LOW PRIORITY CHANGE');
-				responseEmbed.setImage('https://i.imgur.com/JJ4KxbS.png');
+				attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.priority.lowpriority.text, stringLibrary.Characters.Ralsei.Change.priority.lowpriority.image);
+				attachment = new AttachmentBuilder(attachmentImage, { name: 'changePriority.png' });
 				shouldChange = false;
 			}
 			else if (wetPriority + messyPriority >= 4 && wetPriority + messyPriority <= 7) {
-				responseEmbed.setDescription('PLACEHOLDER - MEDIUM PRIORITY CHANGE');
-				responseEmbed.setImage('https://i.imgur.com/JJ4KxbS.png');
+				attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.priority.mediumpriority.text, stringLibrary.Characters.Ralsei.Change.priority.mediumpriority.image);
+				attachment = new AttachmentBuilder(attachmentImage, { name: 'changePriority.png' });
 				shouldChange = true;
 			}
 			else if (wetPriority + messyPriority >= 8) {
-				responseEmbed.setDescription('stringLibrary.Characters.Ralsei.Change.status.self.changeHighPriority');
-				responseEmbed.setImage('https://i.imgur.com/JJ4KxbS.png');
+				attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.priority.highpriority.text, stringLibrary.Characters.Ralsei.Change.priority.highpriority.image);
+				attachment = new AttachmentBuilder(attachmentImage, { name: 'changePriority.png' });
 				shouldChange = true;
 			}
 			if (shouldChange == false) {
-				await interaction.followUp({
-					embeds: [responseEmbed],
+				await response.edit({
+					files: [attachment],
 					ephemeral: true });
 			}
 			if (shouldChange == true) {
-				await interaction.followUp({
-					embeds: [responseEmbed],
+				await response.edit({
+					files: [attachment],
 					components: [row3],
 					ephemeral: true });
 				const changeCollector = await response.awaitMessageComponent({ filter: changeFilter, time: 60000 });
 				if (changeCollector.customId === 'confirmButton') {
+					attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.General.changeConfirm, stringLibrary.Characters.Ralsei.Change.General.changeStart.image);
 					await interaction.update({ embeds: [responseEmbed], components: [] });
 					// Do Change here
 					changeUser(wetCollector.values[0], messyCollector.values[0]);
