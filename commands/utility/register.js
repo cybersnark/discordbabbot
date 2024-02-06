@@ -3,7 +3,6 @@ const stringLibrary = require('../../config/stringLibrary.json');
 const database = require('../../database.js');
 const { characterMessage } = require('../../functions/characterMessage.js');
 const wait = require('node:timers/promises').setTimeout;
-
 /*
 const userdb = sequelize.define('user', {
 	name: {
@@ -16,10 +15,16 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('register')
 		.setDescription('Provides information about the user.'),
-	async execute(interaction) {
+	async execute(client, interaction) {
 		let user = interaction.options.getUser('user') ?? interaction.user;
-		// Let's try and shorten the stringLibrary path by taking the user's chosen caretaker and using it as the root.
-		// const characterRoot = stringLibrary.Characters.{client.careTaker} -- not actually defined yet.
+		// Ralsei will almost always be the default caretaker here, as the user is not yet registered.
+		let careTaker = database.userdb.findOne({ attributes: ['caretaker'] }, { where: { name: user.username } });
+		if (!careTaker) {
+			careTaker = 'Ralsei';
+		}
+
+		// Shorten the stringLibrary.Characters[careTaker] to ctReg for brevity and readability.
+		const ctReg = stringLibrary.Characters[careTaker].Register;
 		const littleAgeMenu = new StringSelectMenuBuilder()
 			.setCustomId('littleAgeMenu')
 			.setPlaceholder('What is your little age?')
@@ -88,7 +93,7 @@ module.exports = {
 		let attachment;
 
 		if (user) {
-			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.alreadyRegistered.text, stringLibrary.Characters.Ralsei.Register.alreadyRegistered.image);
+			attachmentImage = await characterMessage(ctReg.alreadyRegistered.text, ctReg.alreadyRegistered.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'alreadyRegistered.png' });
 			const response = await interaction.reply({
 				files: [attachment],
@@ -96,14 +101,14 @@ module.exports = {
 			});
 		}
 		else {
-			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.registerStart.text, stringLibrary.Characters.Ralsei.Register.registerStart.image);
+			attachmentImage = await characterMessage(ctReg.registerStart.text, ctReg.registerStart.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'registerStart.png' });
 			const response = await interaction.reply({
 				files: [attachment],
 				ephemeral: true,
 			});
 			await wait(2_000);
-			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.name.text, stringLibrary.Characters.Ralsei.Register.name.image);
+			attachmentImage = await characterMessage(ctReg.name.text, ctReg.name.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'name.png' });
 			await response.edit(
 				{
@@ -113,11 +118,11 @@ module.exports = {
 				},
 			);
 			const nameCollector = await response.awaitMessageComponent({ filter: nameFilter, time: 60_000 });
-			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.nameConfirm.text.replace('[name]', nameCollector.values[0]), stringLibrary.Characters.Ralsei.Register.nameConfirm.image);
+			attachmentImage = await characterMessage(ctReg.nameConfirm.text.replace('[name]', nameCollector.values[0]), ctReg.nameConfirm.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'nameConfirm.png' });
 			await nameCollector.update({ files: [attachment], components: [] });
 			await wait(2_000);
-			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.littleAge.text, stringLibrary.Characters.Ralsei.Register.littleAge.image);
+			attachmentImage = await characterMessage(ctReg.littleAge.text, ctReg.littleAge.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'littleAge.png' });
 			await response.edit(
 				{
@@ -127,11 +132,11 @@ module.exports = {
 				},
 			);
 			const ageCollector = await response.awaitMessageComponent({ filter: ageFilter, time: 60_000 });
-			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.littleAgeConfirm.text, stringLibrary.Characters.Ralsei.Register.littleAgeConfirm.image);
+			attachmentImage = await characterMessage(ctReg.littleAgeConfirm.text, ctReg.littleAgeConfirm.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'littleAgeConfirm.png' });
 			await ageCollector.update({ files: [attachment], components: [] });
 			await wait(2_000);
-			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.diaper247Check.text, stringLibrary.Characters.Ralsei.Register.diaper247Check.image);
+			attachmentImage = await characterMessage(ctReg.diaper247Check.text, ctReg.diaper247Check.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'diaper247Check.png' });
 			await response.edit(
 				{
@@ -142,17 +147,17 @@ module.exports = {
 			);
 			const diaper247Collector = await response.awaitMessageComponent({ filter: diaper247Filter, time: 60_000 });
 			if (diaper247Collector.values[0] === true) {
-				attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.diaper247Confirm.text, stringLibrary.Characters.Ralsei.Register.diaper247Confirm.image);
+				attachmentImage = await characterMessage(ctReg.diaper247Confirm.text, ctReg.diaper247Confirm.image);
 				attachment = new AttachmentBuilder(attachmentImage, { name: 'diaper247Confirm.png' });
 				await diaper247Collector.update({ files: [attachment], components: [] });
 			}
 			else if (diaper247Collector.values[0] === false) {
-				attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.diaper247NoDiapers.text, stringLibrary.Characters.Ralsei.Register.diaper247NoDiapers.image);
+				attachmentImage = await characterMessage(ctReg.diaper247NoDiapers.text, ctReg.diaper247NoDiapers.image);
 				attachment = new AttachmentBuilder(attachmentImage, { name: 'diaper247NoDiapers.png' });
 				await diaper247Collector.update({ files: [attachment], components: [] });
 			}
 			await wait(2_000);
-			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.registerFinish.text, stringLibrary.Characters.Ralsei.Register.registerFinish.image);
+			attachmentImage = await characterMessage(ctReg.registerFinish.text, ctReg.registerFinish.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'registerFinish.png' });
 			await response.edit(
 				{
@@ -160,6 +165,20 @@ module.exports = {
 					ephemeral: true,
 				},
 			);
+			await database.userdb.create({
+				name: user.username,
+				littleAge: ageCollector.values[0],
+				preferredName: nameCollector.values[0],
+				diaper247: diaper247Collector.values[0],
+				caretaker: careTaker,
+			});
+			database.userdb.save();
+			attachmentImage = await characterMessage(ctReg.diaperReminder.text, ctReg.diaperReminder.image);
+			attachment = new AttachmentBuilder(attachmentImage, { name: 'diaperReminder.png' });
+			await response.followup({
+				files: [attachment],
+				ephemeral: true,
+			});
 		}
 	},
 };

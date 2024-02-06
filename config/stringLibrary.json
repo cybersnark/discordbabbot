@@ -57,6 +57,10 @@
         "registerAnnounce": {
           "text": "*Ralsei steps in for a moment giving a gentle wave.*\\nHey, kiddos, we've got a new friend joining us today!  Let's be sure to give [name] a warm welcome!",
           "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+        },
+        "diaperReminder": {
+          "text": "*Oh! And don't forget to update your diaper stash!*\\n\\nUse the command /diaperstash to let me know what kind of diapers you have!",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
         }    
       },
       "Change": {

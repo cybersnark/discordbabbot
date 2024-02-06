@@ -1,5 +1,4 @@
 const { GlobalFonts } = require('@napi-rs/canvas');
-const { AttachmentBuilder } = require('discord.js');
 const Canvas = require('@napi-rs/canvas');
 
 async function characterMessage(text, background) {
