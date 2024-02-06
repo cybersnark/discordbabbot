@@ -1,7 +1,5 @@
 const { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder, ComponentType, EmbedBuilder, SlashCommandUserOption } = require('discord.js');
 const changeUser = require('../../functions/changeUser.js');
-const { GlobalFonts } = require('@napi-rs/canvas');
-const Canvas = require('@napi-rs/canvas');
 const stringLibrary = require('../../config/stringLibrary.json');
 const characterLogic = require('../../config/characterLogic.json');
 const database = require('../../database.js');
@@ -79,19 +77,6 @@ module.exports = {
 
 		let attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.status.self.wet.check.text, stringLibrary.Characters.Ralsei.Change.status.self.wet.check.image);
 		let attachment = new AttachmentBuilder(attachmentImage, { name: 'diaperStatus.png' });
-
-		const wetEmbed = new EmbedBuilder()
-			.setTitle('PLACEHOLDER - WET DIAPER QUERY')
-			.setDescription(stringLibrary.Characters.Ralsei.Change.status.self.wet.check.text)
-			.setColor('#ebebeb');
-		const messyEmbed = new EmbedBuilder()
-			.setTitle('PLACEHOLDER - MESSY DIAPER QUERY')
-			.setDescription(stringLibrary.Characters.Ralsei.Change.status.self.messy.check.text)
-			.setColor('#ebebeb');
-		const responseEmbed = new EmbedBuilder()
-			.setTitle('PLACEHOLDER - DIAPER CHANGE RESPONSE')
-			.setDescription(stringLibrary.Characters.Ralsei.Change.General.changeStart)
-			.setColor('#ebebeb');
 
 		// TODO: Depending on the selections the user made, the bot will send a message urging for the user to change their diaper.
 		// We may be able to establish a "weight" that will determine how urgent the bot will be in asking the user to change their diaper.
@@ -178,7 +163,10 @@ module.exports = {
 				const changeCollector = await response.awaitMessageComponent({ filter: changeFilter, time: 60000 });
 				if (changeCollector.customId === 'confirmButton') {
 					attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.General.changeConfirm, stringLibrary.Characters.Ralsei.Change.General.changeStart.image);
-					await interaction.update({ embeds: [responseEmbed], components: [] });
+					attachment = new AttachmentBuilder(attachmentImage, { name: 'changePriority.png' });
+					await response.edit({
+						files: [attachment],
+						ephemeral: true });
 					// Do Change here
 					changeUser(wetCollector.values[0], messyCollector.values[0]);
 				}

@@ -65,7 +65,6 @@ module.exports = {
 		),
 	async autocomplete(interaction) {
 		// To overcome the 25 string option limit, we can use the autocomplete feature to dynamically generate the list of options.
-		console.log('Autocomplete Test');
 		const focusedOption = interaction.options.getFocused(true);
 		const printChoices = [...paddingList];
 		const userChoices = await database.diapStash.findAll({

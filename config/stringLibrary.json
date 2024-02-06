@@ -1,6 +1,64 @@
 {
   "Characters": {
     "Ralsei": {
+      "Register": {
+        "registerStart": {
+          "text": "O-oh, hello there!  I'm Ralsei, the fluffy caretaker of this nursery!\\nI'm so happy to meet you!I'll be sure to take good care of you,\\nso don't worry, okay?",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+        },
+        "alreadyRegistered": {
+          "text": "Oh!  It looks like you're already registered here!",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+        },
+        "littleAge": {
+          "text": "So I can better take care of you, could you tell me your little age?",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_default_box.png"
+        },
+        "littleAgeConfirm": {
+          "text": "Thank you for telling me!\\nI'll be sure to keep that in mind while I take care of you!",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+        },
+        "name": {
+          "text": "Oh, and do you have a name you'd like me to call you?",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_default_box.png"
+        },
+        "nameConfirm": {
+          "text": "Nice to meet you, [name]!\\nI'll be sure to remember that!",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+        },
+        "diaper247Check": {
+          "text": "Umm, this might be a little personal, but do you wear diapers 24/7?\\n\\nOr just sometimes?",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_looking_down_blush_box.png"
+        },
+        "diaper247NoDiapers": {
+          "text": "You just wear diapers sometimes, huh?\\nThat's okay, I'll be sure to keep that in mind!",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+        },
+        "diaper247Confirm": {
+          "text": "I see! Thank you for telling me!",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+        },
+        "currentDiaper": {
+          "text": "I-if you don't mind me asking, what kind of diaper are you wearing right now?",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_looking_down_blush_box.png"
+        },
+        "currentDiaperConfirm": {
+          "text": "Thank you for telling me!\\nI'll be sure to keep that in mind!",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+        },
+        "registerFinish": {
+          "text": "I think that's all the information I need to know for now!\\nFeel free to run along now, and let me know if you need anything, okay?",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+        },
+        "unRegister": {
+          "text": "Oh, are you leaving already?\\nI hope you had a good time here!\\nFeel free to come back anytime, okay?",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+        },
+        "registerAnnounce": {
+          "text": "*Ralsei steps in for a moment giving a gentle wave.*\\nHey, kiddos, we've got a new friend joining us today!  Let's be sure to give [name] a warm welcome!",
+          "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+        }    
+      },
       "Change": {
         "General": {
           "changeStart": "It looks like it's time for a diaper change! Let's check just to be sure.",
