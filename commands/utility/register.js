@@ -52,7 +52,8 @@ module.exports = {
 	},
 	async execute(interaction) {
 		let user = interaction.options.getUser('user') ?? interaction.user;
-		const characterRoot = stringLibrary.Characters.{client.careTaker}
+		// Let's try and shorten the stringLibrary path by taking the user's chosen caretaker and using it as the root.
+		// const characterRoot = stringLibrary.Characters.{client.careTaker} -- not actually defined yet.
 		const littleAgeMenu = new StringSelectMenuBuilder()
 			.setCustomId('littleAgeMenu')
 			.setPlaceholder('What is your little age?')
@@ -104,6 +105,16 @@ module.exports = {
 			.addComponents(
 				diaper247Check,
 			);
+		const nameFilter = i => {
+			return i.customId === 'preferredName' && i.user.id === interaction.user.id;
+		};
+		const ageFilter = i => {
+			return i.customId === 'littleAgeMenu' && i.user.id === interaction.user.id;
+		};
+		const diaper247Filter = i => {
+			return i.customId === 'diaper247Check' && i.user.id === interaction.user.id;
+		};
+
 		// interaction.user is the object representing the User who ran the command
 		// interaction.member is the GuildMember object, which represents the user in the specific guild
 		user = await database.userdb.findOne({ where: { name: user.username } });
@@ -113,20 +124,76 @@ module.exports = {
 		if (user) {
 			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.alreadyRegistered.text, stringLibrary.Characters.Ralsei.Register.alreadyRegistered.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'alreadyRegistered.png' });
-			let response = await interaction.reply({
+			const response = await interaction.reply({
 				files: [attachment],
 				ephemeral: true,
-
 			});
 		}
 		else {
-			await characterMessage(stringLibrary.Characters.Ralsei.Register.registerStart.text, stringLibrary.Characters.Ralsei.Register.registerStart.image);
-			await wait(2_000);
-			await database.userdb.create({
-				name: interaction.user.username,
+			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.registerStart.text, stringLibrary.Characters.Ralsei.Register.registerStart.image);
+			attachment = new AttachmentBuilder(attachmentImage, { name: 'registerStart.png' });
+			const response = await interaction.reply({
+				files: [attachment],
+				ephemeral: true,
 			});
-			user = await database.userdb.findOne({ where: { name: user.username } });
-			await interaction.followUp({ content: 'All done! You\'re now registered!', ephemeral: true });
+			await wait(2_000);
+			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.name.text, stringLibrary.Characters.Ralsei.Register.name.image);
+			attachment = new AttachmentBuilder(attachmentImage, { name: 'name.png' });
+			await response.edit(
+				{
+					files: [attachment],
+					components: [row2],
+					ephemeral: true,
+				},
+			);
+			const nameCollector = await response.awaitMessageComponent({ filter: nameFilter, time: 60_000 });
+			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.nameConfirm.text.replace('[name]', nameCollector.values[0]), stringLibrary.Characters.Ralsei.Register.nameConfirm.image);
+			attachment = new AttachmentBuilder(attachmentImage, { name: 'nameConfirm.png' });
+			await nameCollector.update({ files: [attachment], components: [] });
+			await wait(2_000);
+			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.littleAge.text, stringLibrary.Characters.Ralsei.Register.littleAge.image);
+			attachment = new AttachmentBuilder(attachmentImage, { name: 'littleAge.png' });
+			await response.edit(
+				{
+					files: [attachment],
+					components: [row1],
+					ephemeral: true,
+				},
+			);
+			const ageCollector = await response.awaitMessageComponent({ filter: ageFilter, time: 60_000 });
+			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.littleAgeConfirm.text, stringLibrary.Characters.Ralsei.Register.littleAgeConfirm.image);
+			attachment = new AttachmentBuilder(attachmentImage, { name: 'littleAgeConfirm.png' });
+			await ageCollector.update({ files: [attachment], components: [] });
+			await wait(2_000);
+			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.diaper247Check.text, stringLibrary.Characters.Ralsei.Register.diaper247Check.image);
+			attachment = new AttachmentBuilder(attachmentImage, { name: 'diaper247Check.png' });
+			await response.edit(
+				{
+					files: [attachment],
+					components: [row3],
+					ephemeral: true,
+				},
+			);
+			const diaper247Collector = await response.awaitMessageComponent({ filter: diaper247Filter, time: 60_000 });
+			if (diaper247Collector.values[0] === true) {
+				attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.diaper247Confirm.text, stringLibrary.Characters.Ralsei.Register.diaper247Confirm.image);
+				attachment = new AttachmentBuilder(attachmentImage, { name: 'diaper247Confirm.png' });
+				await diaper247Collector.update({ files: [attachment], components: [] });
+			}
+			else if (diaper247Collector.values[0] === false) {
+				attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.diaper247NoDiapers.text, stringLibrary.Characters.Ralsei.Register.diaper247NoDiapers.image);
+				attachment = new AttachmentBuilder(attachmentImage, { name: 'diaper247NoDiapers.png' });
+				await diaper247Collector.update({ files: [attachment], components: [] });
+			}
+			await wait(2_000);
+			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Register.registerFinish.text, stringLibrary.Characters.Ralsei.Register.registerFinish.image);
+			attachment = new AttachmentBuilder(attachmentImage, { name: 'registerFinish.png' });
+			await response.edit(
+				{
+					files: [attachment],
+					ephemeral: true,
+				},
+			);
 		}
 	},
 };
