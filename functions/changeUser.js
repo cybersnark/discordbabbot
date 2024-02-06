@@ -2,7 +2,7 @@ const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, S
 const database = require('../database.js');
 const Sequelize = require('sequelize');
 const stringLibrary = require('../config/stringLibrary.json');
-const { characterMessage } = require('../../functions/characterMessage.js');
+const { characterMessage } = require('./characterMessage.js');
 const wait = require('node:timers/promises').setTimeout;
 module.exports = async (client, interaction, args) => {
 	const brands = await database.diapStash.findAll({
