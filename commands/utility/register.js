@@ -16,40 +16,6 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('register')
 		.setDescription('Provides information about the user.'),
-
-	async autocomplete(interaction) {
-		// To overcome the 25 string option limit, we can use the autocomplete feature to dynamically generate the list of options.
-		const focusedOption = interaction.options.getFocused(true);
-		const printChoices = [...paddingList];
-		const userChoices = await database.diapStash.findAll({
-			raw: true,
-			attributes: ['name', 'brand', 'quantity'],
-			where: {
-				name: interaction.user.username,
-				quantity: {
-					[Sequelize.Op.gt]: 0,
-				},
-			},
-		});
-		let choices;
-		if (focusedOption.name === 'brand' && interaction.options.getSubcommand() === 'add') {
-			choices = (printChoices);
-		}
-		else if (focusedOption.name === 'brand' && interaction.options.getSubcommand() === 'remove') {
-			choices = userChoices.map(t => t.brand);
-		}
-		let filtered;
-		console.log(focusedOption.value);
-		if (focusedOption.value === '' || focusedOption.value === null || focusedOption.value === undefined) {
-			filtered = choices.slice(0, 24);
-		}
-		else {
-			filtered = choices.filter(choice => choice.toLowerCase().startsWith(focusedOption.value.toLowerCase()));
-		}
-		await interaction.respond(
-			filtered.map(choice => ({ name: choice, value: choice })),
-		);
-	},
 	async execute(interaction) {
 		let user = interaction.options.getUser('user') ?? interaction.user;
 		// Let's try and shorten the stringLibrary path by taking the user's chosen caretaker and using it as the root.
