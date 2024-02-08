@@ -15,6 +15,7 @@ module.exports = {
 
 		// Shorten the stringLibrary.Characters[careTaker] to ctReg for brevity and readability.
 		const ctReg = stringLibrary.Characters[careTaker].Register;
+		// Create the select menus for the user to select their little age and whether they wear 24/7.
 		const littleAgeMenu = new StringSelectMenuBuilder()
 			.setCustomId('littleAgeMenu')
 			.setPlaceholder('What is your little age?')
@@ -49,6 +50,7 @@ module.exports = {
 					.setDescription('I don\'t wear 24/7')
 					.setValue('false'),
 			);
+		// Create the action rows for the select menus to be placed in.
 		const row1 = new ActionRowBuilder()
 			.addComponents(
 				littleAgeMenu,
@@ -57,6 +59,7 @@ module.exports = {
 			.addComponents(
 				diaper247Check,
 			);
+		// Create the filters for the select menus.
 		const ageFilter = i => {
 			return i.customId === 'littleAgeMenu' && i.user.id === interaction.user.id;
 		};
@@ -64,12 +67,12 @@ module.exports = {
 			return i.customId === 'diaper247Check' && i.user.id === interaction.user.id;
 		};
 
-		// interaction.user is the object representing the User who ran the command
-		// interaction.member is the GuildMember object, which represents the user in the specific guild
+		// Check if the user is already registered.
 		const user = await database.userdb.findOne({ where: { name: interaction.user.username } });
 		let attachmentImage;
 		let attachment;
 
+		// If the user is already registered, send a message and delete it after 5 seconds.
 		if (user) {
 			attachmentImage = await characterMessage(ctReg.alreadyRegistered.text, ctReg.alreadyRegistered.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'alreadyRegistered.png' });
@@ -81,6 +84,7 @@ module.exports = {
 			await interaction.deleteReply();
 		}
 		else {
+			// If the user is not registered, begin the registration process.
 			attachmentImage = await characterMessage(ctReg.registerStart.text, ctReg.registerStart.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'registerStart.png' });
 			const response = await interaction.reply({
@@ -90,6 +94,8 @@ module.exports = {
 			await wait(2_000);
 			attachmentImage = await characterMessage(ctReg.name.text, ctReg.name.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'name.png' });
+
+			// Send the first message and wait for the user to respond with their preferred name.
 			let preferredName;
 			await response.edit({
 				files: [attachment],
@@ -110,6 +116,8 @@ module.exports = {
 					});
 			}
 			catch (ex) {
+				// If the user doesn't respond in time, use their username as their preferred name.
+				// TODO: User should be able to change this later.
 				console.log(ex);
 				preferredName = interaction.user.username;
 			}
@@ -117,6 +125,7 @@ module.exports = {
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'nameConfirm.png' });
 			await response.edit({ files: [attachment], components: [] });
 			await wait(2_000);
+			// Send the next message and wait for the user to respond with their little age.
 			attachmentImage = await characterMessage(ctReg.littleAge.text, ctReg.littleAge.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'littleAge.png' });
 			await response.edit(
@@ -131,6 +140,7 @@ module.exports = {
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'littleAgeConfirm.png' });
 			await ageCollector.update({ files: [attachment], components: [] });
 			await wait(2_000);
+			// Send the next message and wait for the user to respond with whether they wear 24/7.
 			attachmentImage = await characterMessage(ctReg.diaper247Check.text, ctReg.diaper247Check.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'diaper247Check.png' });
 			await response.edit(
@@ -151,6 +161,13 @@ module.exports = {
 				attachment = new AttachmentBuilder(attachmentImage, { name: 'diaper247NoDiapers.png' });
 				await diaper247Collector.update({ files: [attachment], components: [] });
 			}
+			/*
+			* It would be nice if we could ask the user what they're currently wearing so we could create a diaperStatus entry for them here.
+			* This is made difficult by the fact that we cannot use AutoComplete for this kind of response.
+			* Using a SelectMenu would have us limited to 25 options, which is not enough for the number of brands we have.
+			* We could use a slashcommand, but that would require more manual input from the user and would feel kind of clunky.
+			* Instead, let's encourage the user to update their stash and status at the end of the registration process.
+			*/
 			await wait(2_000);
 			attachmentImage = await characterMessage(ctReg.registerFinish.text, ctReg.registerFinish.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'registerFinish.png' });
