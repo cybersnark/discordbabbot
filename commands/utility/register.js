@@ -1,21 +1,14 @@
-const { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuOptionBuilder, SlashCommandBuilder, StringSelectMenuBuilder, TextInputBuilder } = require('discord.js');
+const { ActionRowBuilder, AttachmentBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder, StringSelectMenuBuilder } = require('discord.js');
 const stringLibrary = require('../../config/stringLibrary.json');
 const database = require('../../database.js');
 const { characterMessage } = require('../../functions/characterMessage.js');
-const { set } = require('lodash');
+
 const wait = require('node:timers/promises').setTimeout;
-/*
-const userdb = sequelize.define('user', {
-	name: {
-		type: Sequelize.STRING,
-		unique: true,
-	},
-});
-*/
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('register')
-		.setDescription('Provides information about the user.'),
+		.setDescription('Begins registration for a new user with Ralsei.'),
 	async execute(interaction) {
 		// Ralsei will almost always be the default caretaker here, as the user is not yet registered.
 		const careTaker = 'Ralsei';
@@ -43,11 +36,6 @@ module.exports = {
 					.setDescription('8-12 years old')
 					.setValue('3'),
 			);
-		/* const preferredName = new TextInputBuilder()
-			.setCustomId('preferredName')
-			.setPlaceholder('What is your preferred name?')
-			.setMinLength(2)
-			.setMaxLength(64);*/
 		const diaper247Check = new StringSelectMenuBuilder()
 			.setCustomId('diaper247Check')
 			.setPlaceholder('Do you wear 24/7?')
@@ -65,11 +53,6 @@ module.exports = {
 			.addComponents(
 				littleAgeMenu,
 			);
-			/*
-		const row2 = new ActionRowBuilder()
-			.addComponents(
-				preferredName,
-			);*/
 		const row3 = new ActionRowBuilder()
 			.addComponents(
 				diaper247Check,
@@ -111,7 +94,6 @@ module.exports = {
 				ephemeral: true,
 				fetchReply: true,
 			});
-			// while (preferredName === undefined) {
 			try {
 				const nameFilter = m => {
 
@@ -129,20 +111,6 @@ module.exports = {
 				console.log(ex);
 				preferredName = interaction.user.username;
 			}
-
-
-			// }
-			/* if (preferredName === undefined) {
-				console.log('No preferred name');
-				await wait(3_500);
-			}
-			console.log(preferredName);
-			if (preferredName === undefined) {
-				console.log('No preferred name');
-				preferredName = interaction.user.username;
-			}
-			*/
-			// console.log(preferredName);
 			attachmentImage = await characterMessage(ctReg.nameConfirm.text.replace('[name]', preferredName), ctReg.nameConfirm.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'nameConfirm.png' });
 			await response.edit({ files: [attachment], components: [] });
@@ -203,6 +171,8 @@ module.exports = {
 				files: [attachment],
 				ephemeral: true,
 			});
+			await wait(30_000);
+			await response.delete();
 		}
 	},
 };
