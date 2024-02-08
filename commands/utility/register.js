@@ -73,10 +73,12 @@ module.exports = {
 		if (user) {
 			attachmentImage = await characterMessage(ctReg.alreadyRegistered.text, ctReg.alreadyRegistered.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'alreadyRegistered.png' });
-			const response = await interaction.reply({
+			await interaction.reply({
 				files: [attachment],
 				ephemeral: true,
 			});
+			await wait(5_000);
+			await interaction.deleteReply();
 		}
 		else {
 			attachmentImage = await characterMessage(ctReg.registerStart.text, ctReg.registerStart.image);
