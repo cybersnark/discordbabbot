@@ -2,6 +2,7 @@ const { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, StringS
 const stringLibrary = require('../../config/stringLibrary.json');
 const database = require('../../database.js');
 const { characterMessage } = require('../../functions/characterMessage.js');
+const { set } = require('lodash');
 const wait = require('node:timers/promises').setTimeout;
 /*
 const userdb = sequelize.define('user', {
@@ -15,13 +16,9 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('register')
 		.setDescription('Provides information about the user.'),
-	async execute(client, interaction) {
-		let user = interaction.options.getUser('user') ?? interaction.user;
+	async execute(interaction) {
 		// Ralsei will almost always be the default caretaker here, as the user is not yet registered.
-		let careTaker = database.userdb.findOne({ attributes: ['caretaker'] }, { where: { name: user.username } });
-		if (!careTaker) {
-			careTaker = 'Ralsei';
-		}
+		const careTaker = 'Ralsei';
 
 		// Shorten the stringLibrary.Characters[careTaker] to ctReg for brevity and readability.
 		const ctReg = stringLibrary.Characters[careTaker].Register;
@@ -46,11 +43,11 @@ module.exports = {
 					.setDescription('8-12 years old')
 					.setValue('3'),
 			);
-		const preferredName = new TextInputBuilder()
+		/* const preferredName = new TextInputBuilder()
 			.setCustomId('preferredName')
 			.setPlaceholder('What is your preferred name?')
 			.setMinLength(2)
-			.setMaxLength(64);
+			.setMaxLength(64);*/
 		const diaper247Check = new StringSelectMenuBuilder()
 			.setCustomId('diaper247Check')
 			.setPlaceholder('Do you wear 24/7?')
@@ -58,27 +55,25 @@ module.exports = {
 				new StringSelectMenuOptionBuilder()
 					.setLabel('Yes')
 					.setDescription('I wear 24/7')
-					.setValue(true),
+					.setValue('true'),
 				new StringSelectMenuOptionBuilder()
 					.setLabel('No')
 					.setDescription('I don\'t wear 24/7')
-					.setValue(false),
+					.setValue('false'),
 			);
 		const row1 = new ActionRowBuilder()
 			.addComponents(
 				littleAgeMenu,
 			);
+			/*
 		const row2 = new ActionRowBuilder()
 			.addComponents(
 				preferredName,
-			);
+			);*/
 		const row3 = new ActionRowBuilder()
 			.addComponents(
 				diaper247Check,
 			);
-		const nameFilter = i => {
-			return i.customId === 'preferredName' && i.user.id === interaction.user.id;
-		};
 		const ageFilter = i => {
 			return i.customId === 'littleAgeMenu' && i.user.id === interaction.user.id;
 		};
@@ -88,7 +83,7 @@ module.exports = {
 
 		// interaction.user is the object representing the User who ran the command
 		// interaction.member is the GuildMember object, which represents the user in the specific guild
-		user = await database.userdb.findOne({ where: { name: user.username } });
+		const user = await database.userdb.findOne({ where: { name: interaction.user.username } });
 		let attachmentImage;
 		let attachment;
 
@@ -110,17 +105,47 @@ module.exports = {
 			await wait(2_000);
 			attachmentImage = await characterMessage(ctReg.name.text, ctReg.name.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'name.png' });
-			await response.edit(
-				{
-					files: [attachment],
-					components: [row2],
-					ephemeral: true,
-				},
-			);
-			const nameCollector = await response.awaitMessageComponent({ filter: nameFilter, time: 60_000 });
-			attachmentImage = await characterMessage(ctReg.nameConfirm.text.replace('[name]', nameCollector.values[0]), ctReg.nameConfirm.image);
+			let preferredName;
+			await response.edit({
+				files: [attachment],
+				ephemeral: true,
+				fetchReply: true,
+			});
+			// while (preferredName === undefined) {
+			try {
+				const nameFilter = m => {
+
+					return ((m.author.id === interaction.user.id) && (m.content.length >= 2 && m.content.length <= 64));
+				};
+				console.log('Awaiting preferred name');
+				await interaction.channel.awaitMessages({ filter: nameFilter, max:1, time: 15_000, errors: ['time'] })
+					.then(collected => {
+						preferredName = collected.first().content;
+						collected.first().delete();
+						console.log('Got preferred name: ' + preferredName);
+					});
+			}
+			catch (ex) {
+				console.log(ex);
+				preferredName = interaction.user.username;
+			}
+
+
+			// }
+			/* if (preferredName === undefined) {
+				console.log('No preferred name');
+				await wait(3_500);
+			}
+			console.log(preferredName);
+			if (preferredName === undefined) {
+				console.log('No preferred name');
+				preferredName = interaction.user.username;
+			}
+			*/
+			// console.log(preferredName);
+			attachmentImage = await characterMessage(ctReg.nameConfirm.text.replace('[name]', preferredName), ctReg.nameConfirm.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'nameConfirm.png' });
-			await nameCollector.update({ files: [attachment], components: [] });
+			await response.edit({ files: [attachment], components: [] });
 			await wait(2_000);
 			attachmentImage = await characterMessage(ctReg.littleAge.text, ctReg.littleAge.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'littleAge.png' });
@@ -166,13 +191,12 @@ module.exports = {
 				},
 			);
 			await database.userdb.create({
-				name: user.username,
+				name: interaction.user.username,
 				littleAge: ageCollector.values[0],
-				preferredName: nameCollector.values[0],
+				preferredName: preferredName,
 				diaper247: diaper247Collector.values[0],
-				caretaker: careTaker,
+				careTaker: careTaker,
 			});
-			database.userdb.save();
 			attachmentImage = await characterMessage(ctReg.diaperReminder.text, ctReg.diaperReminder.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'diaperReminder.png' });
 			await response.followup({

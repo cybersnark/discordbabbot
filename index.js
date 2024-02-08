@@ -3,7 +3,7 @@ const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config/config.json');
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
@@ -58,5 +58,9 @@ client.on(Events.InteractionCreate, async interaction => {
 			console.error(error);
 		}
 	}
+});
+
+client.on('messageCreate', async (message) => {
+	console.log(message.content);
 });
 client.login(token);

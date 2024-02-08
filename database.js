@@ -15,6 +15,22 @@ module.exports = {
 			type: Sequelize.STRING,
 			unique: true,
 		},
+		littleAge: {
+			type: Sequelize.INTEGER,
+			allowNull: false,
+		},
+		preferredName: {
+			type: Sequelize.STRING,
+		},
+		diaper247: {
+			type: Sequelize.BOOLEAN,
+			allowNuyll: false,
+		},
+		careTaker: {
+			type: Sequelize.STRING,
+			allowNull: false,
+		},
+
 	}),
 	diapStash: sequelize.define('diaperstash', {
 		name: {
@@ -71,6 +87,9 @@ module.exports = {
 		messy: {
 			type: Sequelize.STRING,
 		},
+		booster: {
+			type: Sequelize.BOOLEAN,
+		},
 		lastChange: {
 			type: Sequelize.DATE,
 		},
@@ -78,30 +97,10 @@ module.exports = {
 			type: Sequelize.DATE,
 		},
 	}),
-
-	brandList: sequelize.define('brandlist', {
-		brand: {
-			type: Sequelize.STRING,
-			unique: true,
-			allowNull: false,
-		},
-		pluralName: {
-			type: Sequelize.STRING,
-			unique: true,
-		},
-	}),
-
 	doSetup: function() {
-		const brands = ['PeekABU', 'Space', 'Simple', 'Super Dry Kids', 'Little Pawz', 'PreSchool', 'Cushies', 'BunnyHopps', 'DinoRawrZ', 'Little Kings', 'AlphaGatorz', 'Kiddo', 'Tiny Tails', 'Overnights', 'Cammies', 'Galactic', 'Unicorn', 'Little Rawrs', 'Waddler', 'Puppers', 'Animooz', 'Camelot', 'Str8up', 'Trest Elite', 'Classico', 'Bianco', 'Magnifico', 'Bellissimo', 'Safari', 'Princess Pink'];
-		const brandPlural = ['PeekABUs', 'Spaces', 'Simples', 'Super Dry Kids', 'Little Pawz', 'PreSchools', 'Cushies', 'BunnyHopps', 'DinoRawrZ', 'Little Kings', 'AlphaGatorz', 'Kiddos', 'Tiny Tails', 'Overnights', 'Cammies', 'Galactics', 'Unicorns', 'Little Rawrs', 'Waddlers', 'Puppers', 'Animooz', 'Camelots', 'Str8ups', 'Trest Elites', 'Classicos', 'Biancos', 'Magnificos', 'Bellissimos', 'Safaris', 'Princess Pinks'];
-
 		sequelize.sync();
-		for (const brand of brands) {
-			this.brandList.create({
-				brand: brand,
-				pluralName: brandPlural[brand],
-			});
-		}
-		this.brandList.sync();
+	},
+	doSave: function() {
+		sequelize.save();
 	},
 };
