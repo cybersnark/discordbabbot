@@ -3,10 +3,13 @@ const Sequelize = require('sequelize');
 const sequelize = new Sequelize('database', 'user', 'password', {
 	host: 'localhost',
 	dialect: 'sqlite',
-	freezetableName: true,
 	logging: false,
 	// SQLite only
 	storage: './db/babdb.sqlite',
+	define: {
+		timestamps: false,
+		freezeTableName: true,
+	},
 });
 
 module.exports = {
@@ -24,13 +27,15 @@ module.exports = {
 		},
 		diaper247: {
 			type: Sequelize.BOOLEAN,
-			allowNuyll: false,
+			allowNull: false,
 		},
 		careTaker: {
 			type: Sequelize.STRING,
 			allowNull: false,
 		},
-
+		publicChange: {
+			type: Sequelize.BOOLEAN,
+		},
 	}),
 	diapStash: sequelize.define('diaperstash', {
 		name: {
@@ -62,10 +67,10 @@ module.exports = {
 			allowNull: false,
 		},
 		wet: {
-			type: Sequelize.BOOLEAN,
+			type: Sequelize.STRING,
 		},
 		messy: {
-			type: Sequelize.BOOLEAN,
+			type: Sequelize.STRING,
 		},
 		changetime: {
 			type: Sequelize.DATE,
@@ -99,8 +104,5 @@ module.exports = {
 	}),
 	doSetup: function() {
 		sequelize.sync();
-	},
-	doSave: function() {
-		sequelize.save();
 	},
 };

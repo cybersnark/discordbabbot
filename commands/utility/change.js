@@ -54,7 +54,6 @@ module.exports = {
 			);
 
 
-
 		const wetFilter = i => {
 			return i.customId === 'wetMenu' && i.user.id === interaction.user.id;
 		};

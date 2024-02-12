@@ -1,7 +1,7 @@
 const { GlobalFonts } = require('@napi-rs/canvas');
 const Canvas = require('@napi-rs/canvas');
 
-async function characterMessage(text, background) {
+async function characterMessage(interaction, text, background) {
 	const aryText = text.split('\\n');
 	GlobalFonts.registerFromPath('../font/DeterminationMonoWebRegular-Z5oq.ttf');
 	const canvas = Canvas.createCanvas(909, 270);

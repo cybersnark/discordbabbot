@@ -151,12 +151,12 @@ module.exports = {
 				},
 			);
 			const diaper247Collector = await response.awaitMessageComponent({ filter: diaper247Filter, time: 60_000 });
-			if (diaper247Collector.values[0] === true) {
+			if (diaper247Collector.values[0] === 'true') {
 				attachmentImage = await characterMessage(ctReg.diaper247Confirm.text, ctReg.diaper247Confirm.image);
 				attachment = new AttachmentBuilder(attachmentImage, { name: 'diaper247Confirm.png' });
 				await diaper247Collector.update({ files: [attachment], components: [] });
 			}
-			else if (diaper247Collector.values[0] === false) {
+			else if (diaper247Collector.values[0] === 'false') {
 				attachmentImage = await characterMessage(ctReg.diaper247NoDiapers.text, ctReg.diaper247NoDiapers.image);
 				attachment = new AttachmentBuilder(attachmentImage, { name: 'diaper247NoDiapers.png' });
 				await diaper247Collector.update({ files: [attachment], components: [] });
@@ -184,9 +184,10 @@ module.exports = {
 				diaper247: diaper247Collector.values[0],
 				careTaker: careTaker,
 			});
+			await wait(1_500);
 			attachmentImage = await characterMessage(ctReg.diaperReminder.text, ctReg.diaperReminder.image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'diaperReminder.png' });
-			await response.followup({
+			await response.edit({
 				files: [attachment],
 				ephemeral: true,
 			});
