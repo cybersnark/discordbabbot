@@ -95,14 +95,7 @@ module.exports = async (client, interaction) => {
 
 	let attachment;
 	let attachmentImage;
-
-
-	if (publicChange === true) {
-		stage = 'brandSelect_public';
-	}
-	else {
-		stage = 'brandSelect';
-	}
+	stage = 'brandSelect';
 	attachmentImage = characterMessage(dcStr.General.Change[stage].text.replace('[name]', name), dcStr.General.Change[stage].image);
 	attachment = new AttachmentBuilder(attachmentImage, 'brandSelect.png');
 	const response = await interaction.reply({
@@ -115,30 +108,19 @@ module.exports = async (client, interaction) => {
 		return i.customId === 'brandMenu' && i.user.id === interaction.user.id;
 	};
 	const brandCollector = await response.awaitMessageComponent({ filter: brandFilter, time: 60_000 });
-	if (publicChange === true) {
-		stage = 'brandSelectResponse_public';
-	}
-	else {
-		stage = 'brandSelectResponse';
-	}
+	stage = 'brandSelectResponse';
 	attachmentImage = characterMessage(dcStr.General.Change[stage].text.replace('[name]', name), dcStr.General.Change[stage].image);
 	attachment = new AttachmentBuilder(attachmentImage, 'brandSelectResponse.png');
 	await response.editReply({
 		files: [attachment],
-		ephemeral: publicChange,
+		ephemeral: true,
 	});
-
-	if (publicChange === true) {
-		stage = 'changeConfirm_public';
-	}
-	else {
-		stage = 'changeConfirm';
-	}
+	stage = 'changeConfirm';
 	attachmentImage = characterMessage(dcStr.General.Change[stage].text.replace('[name]', name), dcStr.General.Change[stage].image);
 	attachment = new AttachmentBuilder(attachmentImage, 'changeConfirm.png');
 
 
-	await response.editReply({
+	const change = await response.followUp({
 		files: [attachment],
 		components: [row3],
 		ephemeral: publicChange,
@@ -155,7 +137,7 @@ module.exports = async (client, interaction) => {
 			stage = 'change';
 		}
 
-		await response.editReply({
+		await change.edit({
 			files: [attachment],
 			components: [],
 			ephemeral: publicChange,
@@ -172,7 +154,7 @@ module.exports = async (client, interaction) => {
 
 		attachmentImage = characterMessage(dcStr.General.Change[stage].text.replace('[name]', name), dcStr.General.Change[stage].image);
 		attachment = new AttachmentBuilder(attachmentImage, 'changeEnd.png');
-		await response.editReply({
+		await change.edit({
 			files: [attachment],
 			components: [],
 			ephemeral: publicChange,

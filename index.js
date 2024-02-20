@@ -24,6 +24,7 @@ for (const folder of commandFolders) {
 		}
 	}
 }
+require('./functions/characterMessage.js')(client);
 client.once(Events.ClientReady, readyClient => {
 	db.doSetup();
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
@@ -33,13 +34,13 @@ client.on(Events.InteractionCreate, async interaction => {
 	if (interaction.isChatInputCommand()) {
 		const command = interaction.client.commands.get(interaction.commandName);
 		if (command === 'register') {
-			await command.execute(interaction);
+			await command.execute(interaction, client);
 		}
 		if (!command) {
 			console.error(`No command matching ${interaction.commandName} was found.`);
 		}
 		try {
-			await command.execute(interaction);
+			await command.execute(interaction, client);
 		}
 		catch (error) {
 			console.error(error);
