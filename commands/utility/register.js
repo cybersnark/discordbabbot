@@ -69,20 +69,9 @@ module.exports = {
 
 		// Check if the user is already registered.
 		const user = await database.userdb.findOne({ where: { name: interaction.user.username } });
-		let attachmentImage;
-		let attachment;
 
 		// If the user is already registered, send a message and delete it after 5 seconds.
 		if (user) {
-			/*
-			attachmentImage = await characterMessage(ctReg.alreadyRegistered.text, ctReg.alreadyRegistered.image);
-			attachment = new AttachmentBuilder(attachmentImage, { name: 'alreadyRegistered.png' });
-			await interaction.reply({
-				files: [attachment],
-				ephemeral: true,
-			});
-			*/
-
 			await client.ctMessage({
 				text:[ctReg.alreadyRegistered],
 				type:'reply',
@@ -104,15 +93,7 @@ module.exports = {
 				deleteReply:false,
 				timeout:2,
 			}, interaction);
-			/*
-			attachmentImage = await characterMessage(ctReg.registerStart.text, ctReg.registerStart.image);
-			attachment = new AttachmentBuilder(attachmentImage, { name: 'registerStart.png' });
-			const response = await interaction.reply({
-				files: [attachment],
-				ephemeral: true,
-			});
-			await wait(2_000);
-			*/
+
 			await client.ctMessage({
 				text:[ctReg.name],
 				type:'editreply',
@@ -120,19 +101,10 @@ module.exports = {
 				ephemeral:true,
 				fetchReply:true,
 			}, interaction);
-			/*
-			attachmentImage = await characterMessage(ctReg.name.text, ctReg.name.image);
-			attachment = new AttachmentBuilder(attachmentImage, { name: 'name.png' });
-			*/
+
 			// Send the first message and wait for the user to respond with their preferred name.
 			let preferredName;
-			/*
-			await response.edit({
-				files: [attachment],
-				ephemeral: true,
-				fetchReply: true,
-			});
-			*/
+
 			try {
 				const nameFilter = m => {
 
@@ -148,7 +120,6 @@ module.exports = {
 			}
 			catch (ex) {
 				// If the user doesn't respond in time, use their username as their preferred name.
-				// TODO: User should be able to change this later.
 				console.log(ex);
 				preferredName = interaction.user.username;
 			}
@@ -161,12 +132,6 @@ module.exports = {
 				timeout:2,
 				replace:['[name]', preferredName],
 			}, interaction);
-			/*
-			attachmentImage = await characterMessage(ctReg.nameConfirm.text.replace('[name]', preferredName), ctReg.nameConfirm.image);
-			attachment = new AttachmentBuilder(attachmentImage, { name: 'nameConfirm.png' });
-			await response.edit({ files: [attachment], components: [] });
-			await wait(2_000);
-			*/
 
 			// Send the next message and wait for the user to respond with their little age.
 
@@ -178,17 +143,6 @@ module.exports = {
 				fetchReply:false,
 				deleteReply:false,
 			}, interaction);
-			/*
-			attachmentImage = await characterMessage(ctReg.littleAge.text, ctReg.littleAge.image);
-			attachment = new AttachmentBuilder(attachmentImage, { name: 'littleAge.png' });
-			await response.edit(
-				{
-					files: [attachment],
-					components: [row1],
-					ephemeral: true,
-				},
-			);
-			*/
 
 
 			const ageCollector = await interaction.channel.awaitMessageComponent({ filter: ageFilter, time: 60_000, max:1 })
@@ -207,12 +161,7 @@ module.exports = {
 				deleteReply:false,
 				timeout:2,
 			}, interaction);
-			/*
-			attachmentImage = await characterMessage(ctReg.littleAgeConfirm.text, ctReg.littleAgeConfirm.image);
-			attachment = new AttachmentBuilder(attachmentImage, { name: 'littleAgeConfirm.png' });
-			await ageCollector.update({ files: [attachment], components: [] });
-			await wait(2_000);
-			*/
+
 			// Send the next message and wait for the user to respond with whether they wear 24/7.
 
 			await client.ctMessage({
@@ -224,17 +173,7 @@ module.exports = {
 				deleteReply:false,
 				timeout:1,
 			}, interaction);
-			/*
-			attachmentImage = await characterMessage(ctReg.diaper247Check.text, ctReg.diaper247Check.image);
-			attachment = new AttachmentBuilder(attachmentImage, { name: 'diaper247Check.png' });
-			await response.edit(
-				{
-					files: [attachment],
-					components: [row3],
-					ephemeral: true,
-				},
-			);
-			*/
+
 			const diaper247Collector = await interaction.channel.awaitMessageComponent({ filter: diaper247Filter, time: 60_000, max:1 })
 				.catch((e) => {
 					console.log(e);
@@ -242,11 +181,6 @@ module.exports = {
 				});
 			await diaper247Collector.deferUpdate();
 			if (diaper247Collector.values[0] === 'true') {
-				/*
-				attachmentImage = await characterMessage(ctReg.diaper247Confirm.text, ctReg.diaper247Confirm.image);
-				attachment = new AttachmentBuilder(attachmentImage, { name: 'diaper247Confirm.png' });
-				await diaper247Collector.update({ files: [attachment], components: [] });
-				*/
 				await client.ctMessage({
 					text:[ctReg.diaper247Confirm],
 					type:'editreply',
@@ -275,16 +209,7 @@ module.exports = {
 			* We could use a slashcommand, but that would require more manual input from the user and would feel kind of clunky.
 			* Instead, let's encourage the user to update their stash and status at the end of the registration process.
 			*/
-			/*
-			attachmentImage = await characterMessage(ctReg.registerFinish.text, ctReg.registerFinish.image);
-			attachment = new AttachmentBuilder(attachmentImage, { name: 'registerFinish.png' });
-			await response.edit(
-				{
-					files: [attachment],
-					ephemeral: true,
-				},
-			);
-			*/
+
 			await client.ctMessage({
 				text:[ctReg.registerFinish],
 				type:'editreply',
@@ -301,15 +226,6 @@ module.exports = {
 				diaper247: diaper247Collector.values[0],
 				careTaker: careTaker,
 			});
-			await wait(1_500);
-			/*
-			attachmentImage = await characterMessage(ctReg.diaperReminder.text, ctReg.diaperReminder.image);
-			attachment = new AttachmentBuilder(attachmentImage, { name: 'diaperReminder.png' });
-			await response.edit({
-				files: [attachment],
-				ephemeral: true,
-			});
-			*/
 			await client.ctMessage({
 				text:[ctReg.diaperReminder],
 				type:'editreply',
@@ -319,7 +235,6 @@ module.exports = {
 				deleteReply:true,
 				timeout:30,
 			}, interaction);
-			// await response.delete();
 		}
 	},
 };
