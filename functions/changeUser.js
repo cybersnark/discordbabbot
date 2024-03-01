@@ -4,15 +4,15 @@ const Sequelize = require('sequelize');
 const stringLibrary = require('../config/stringLibrary.json');
 const { characterMessage } = require('./characterMessage.js');
 const wait = require('node:timers/promises').setTimeout;
-module.exports = async (client, interaction) => {
+module.exports = async (interaction, client, wetness, messiness) => {
 	// Let's represent each step of the change in this variable.  This will allow us to use stringLibrary in a more readable manner.
 	// We'll also use this to determine which image to display.
 	// TODO: To allow for greater configuration flexibility, we could expand this into a "nextStep" function that takes the current step and returns the next step.
 	// This would allow us to easily add or remove steps from the change process using a configuration file.
 	// We could even condense this entire process into a for loop that iterates through the steps, calling nextStep each time.
 	let stage;
+	console.log(interaction);
 	const tracker = database.diapChangeTracker;
-	const status = status;
 	const users = database.userdb;
 	const stash = database.diapStash;
 	const dcStr = stringLibrary.Characters.Ralsei.Change;
@@ -45,7 +45,7 @@ module.exports = async (client, interaction) => {
 	}
 
 	const brandOptions = brands.map(brand => new StringSelectMenuOptionBuilder()
-		.setLabel(brand.brand)
+		.setLabel(brand.brand, '(x' + brand.quantity + ')')
 		.setValue(brand.brand),
 	);
 	const brandMenu = new StringSelectMenuBuilder()
@@ -60,11 +60,11 @@ module.exports = async (client, interaction) => {
 			new StringSelectMenuOptionBuilder()
 				.setLabel('Yes')
 				.setDescription('I want a booster!')
-				.setValue(true),
+				.setValue('true'),
 			new StringSelectMenuOptionBuilder()
 				.setLabel('No')
 				.setDescription('I don\'t want a booster.')
-				.setValue(false),
+				.setValue('false'),
 		);
 
 	const confirmButton = new ButtonBuilder()
@@ -95,32 +95,62 @@ module.exports = async (client, interaction) => {
 
 	let attachment;
 	let attachmentImage;
-	stage = 'brandSelect';
+	/*
 	attachmentImage = characterMessage(dcStr.General.Change[stage].text.replace('[name]', name), dcStr.General.Change[stage].image);
 	attachment = new AttachmentBuilder(attachmentImage, 'brandSelect.png');
+	*/
+
+	await client.ctMessage({
+		text: [dcStr.General.brandSelect],
+		type: 'reply',
+		components: [row1, row2],
+		ephemeral: true,
+	}, interaction);
+	/*
 	const response = await interaction.reply({
 		files: [attachment],
 		components: [row1, row2],
 		ephemeral: true });
-
+	*/
 
 	const brandFilter = i => {
 		return i.customId === 'brandMenu' && i.user.id === interaction.user.id;
 	};
-	const brandCollector = await response.awaitMessageComponent({ filter: brandFilter, time: 60_000 });
+	const brandCollector = await interaction.channel.awaitMessageComponent({ filter: brandFilter, time: 60_000, max: 1 });
+	brandCollector.deferUpdate();
+
+	await client.ctMessage({
+		text: [dcStr.General.brandSelectResponse],
+		type: 'editreply',
+		components: [],
+		ephemeral: true,
+		timeout:2,
+	}, interaction);
+
+	/*
 	stage = 'brandSelectResponse';
 	attachmentImage = characterMessage(dcStr.General.Change[stage].text.replace('[name]', name), dcStr.General.Change[stage].image);
 	attachment = new AttachmentBuilder(attachmentImage, 'brandSelectResponse.png');
+
 	await response.editReply({
 		files: [attachment],
 		ephemeral: true,
 	});
+
 	stage = 'changeConfirm';
+
 	attachmentImage = characterMessage(dcStr.General.Change[stage].text.replace('[name]', name), dcStr.General.Change[stage].image);
 	attachment = new AttachmentBuilder(attachmentImage, 'changeConfirm.png');
+	*/
 
-
-	const change = await response.followUp({
+	const response = await client.ctMessage({
+		text: [dcStr.General.changeConfirm],
+		type: 'followup',
+		components: [row3],
+		ephemeral: true,
+		deleteReply: true,
+	}, interaction);
+	await response.followUp({
 		files: [attachment],
 		components: [row3],
 		ephemeral: publicChange,
@@ -141,7 +171,7 @@ module.exports = async (client, interaction) => {
 			files: [attachment],
 			components: [],
 			ephemeral: publicChange,
-		});
+		}, interaction);
 
 		await wait(3_500);
 

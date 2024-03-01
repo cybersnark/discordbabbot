@@ -18,8 +18,8 @@ module.exports = {
 				.setDescription('The user to check the diaper status of.')
 				.setRequired(false),
 		),
-	async execute(interaction) {
-		const user = interaction.options.getUser('user') ?? interaction.user;
+	async execute(interaction, client) {
+		const user = await database.userdb.findOne({ where: { name: interaction.user.username } });
 		const wetMenu = new StringSelectMenuBuilder()
 			.setCustomId('wetMenu')
 			.setPlaceholder('How wet is your diaper?')
@@ -75,8 +75,10 @@ module.exports = {
 			.setLabel('No, I\'m fine!')
 			.setStyle(ButtonStyle.Danger);
 
-		let attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.status.self.wet.check.text, stringLibrary.Characters.Ralsei.Change.status.self.wet.check.image);
-		let attachment = new AttachmentBuilder(attachmentImage, { name: 'diaperStatus.png' });
+		const ctStatus = stringLibrary.Characters.Ralsei.Change.status.self;
+		const ctPriority = stringLibrary.Characters.Ralsei.Change.priority;
+		const ctChange = stringLibrary.Characters.Ralsei.Change.General;
+
 
 		// TODO: Depending on the selections the user made, the bot will send a message urging for the user to change their diaper.
 		// We may be able to establish a "weight" that will determine how urgent the bot will be in asking the user to change their diaper.
@@ -94,62 +96,109 @@ module.exports = {
 				confirmButton,
 				cancelButton,
 			);
-		if (user.id === interaction.user.id) {
 
-			// TODO: Let's add a separate response block here before diving into the status check. If the user is initiating a check on themselves, the response should be different than one that occurs on a schedule.
-			const response = await interaction.reply({
+
+		// TODO: Let's add a separate response block here before diving into the status check. If the user is initiating a check on themselves, the response should be different than one that occurs on a schedule.
+		/* const response = await interaction.reply({
 				files: [attachment],
 				components: [row1],
 				ephemeral: true });
+				*/
+		await client.ctMessage({
+			text: [ctStatus.wet.check],
+			type: 'reply',
+			components: [row1],
+			ephemeral: true,
+		}, interaction);
 
-			const wetFilter = i => {
-				return i.customId === 'wetMenu' && i.user.id === interaction.user.id;
-			};
-			const messyFilter = i => {
-				return i.customId === 'messyMenu' && i.user.id === interaction.user.id;
-			};
-			const changeFilter = i => {
-				return (i.customId === 'confirmButton' || i.customId === 'cancelButton') && i.user.id === interaction.user.id;
-			};
+		const wetFilter = i => {
+			return i.customId === 'wetMenu' && i.user.id === interaction.user.id;
+		};
+		const messyFilter = i => {
+			return i.customId === 'messyMenu' && i.user.id === interaction.user.id;
+		};
+		const changeFilter = i => {
+			return (i.customId === 'confirmButton' || i.customId === 'cancelButton') && i.user.id === interaction.user.id;
+		};
 			// TODO: Add consideration for the user to add a booster
 			// If user has a booster, wetness will be reduced by 2 levels
 
-			let wetPriority = 0;
-			let messyPriority = 0;
-			let shouldChange = false;
+		let wetPriority = 0;
+		let messyPriority = 0;
 
-			const wetCollector = await response.awaitMessageComponent({ filter: wetFilter, time: 60000 });
+		const wetCollector = await interaction.channel.awaitMessageComponent({ filter: wetFilter, time: 60000, max:1 });
+		await wetCollector.deferUpdate();
+		/*
 			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.status.self.wet[wetCollector.values[0]].text, stringLibrary.Characters.Ralsei.Change.status.self.wet[wetCollector.values[0]].image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'diaperStatus.png' });
-			wetPriority = characterLogic.Characters.Ralsei.changeLogic.diaperStatus[wetCollector.values[0]].changePriority;
 			await wetCollector.update({ files:[attachment], components: [row2] });
+			*/
+		wetPriority = characterLogic.Characters.Ralsei.changeLogic.diaperStatus[wetCollector.values[0]].changePriority;
+		await client.ctMessage({
+			text: [ctStatus.wet[wetCollector.values[0]]],
+			type: 'editreply',
+			components: [],
+			ephemeral: true,
+			timeout: 2,
+		}, interaction);
 
-			const messyCollector = await response.awaitMessageComponent({ filter: messyFilter, time: 60000 });
-			messyPriority = characterLogic.Characters.Ralsei.changeLogic.diaperStatus[messyCollector.values[0]].changePriority;
+		await client.ctMessage({
+			text: [ctStatus.messy.check],
+			type: 'editreply',
+			components: [row2],
+			ephemeral: true,
+		}, interaction);
+
+		const messyCollector = await interaction.channel.awaitMessageComponent({ filter: messyFilter, time: 60000, max:1 });
+		await messyCollector.deferUpdate();
+		messyPriority = characterLogic.Characters.Ralsei.changeLogic.diaperStatus[messyCollector.values[0]].changePriority;
+
+		/*
 			attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.status.self.messy[messyCollector.values[0]].text, stringLibrary.Characters.Ralsei.Change.status.self.messy[messyCollector.values[0]].image);
 			attachment = new AttachmentBuilder(attachmentImage, { name: 'diaperStatus.png' });
 			await messyCollector.update({ files:[attachment], components: [] });
 			await wait (3_000);
-			if (wetPriority + messyPriority == 0) {
-				attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.priority.nochange.text, stringLibrary.Characters.Ralsei.Change.priority.nochange.image);
-				attachment = new AttachmentBuilder(attachmentImage, { name: 'changePriority.png' });
-				shouldChange = false;
-			}
-			else if (wetPriority + messyPriority > 0 && wetPriority + messyPriority <= 3) {
-				attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.priority.lowpriority.text, stringLibrary.Characters.Ralsei.Change.priority.lowpriority.image);
-				attachment = new AttachmentBuilder(attachmentImage, { name: 'changePriority.png' });
-				shouldChange = false;
-			}
-			else if (wetPriority + messyPriority >= 4 && wetPriority + messyPriority <= 7) {
-				attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.priority.mediumpriority.text, stringLibrary.Characters.Ralsei.Change.priority.mediumpriority.image);
-				attachment = new AttachmentBuilder(attachmentImage, { name: 'changePriority.png' });
-				shouldChange = true;
-			}
-			else if (wetPriority + messyPriority >= 8) {
-				attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.priority.highpriority.text, stringLibrary.Characters.Ralsei.Change.priority.highpriority.image);
-				attachment = new AttachmentBuilder(attachmentImage, { name: 'changePriority.png' });
-				shouldChange = true;
-			}
+			*/
+		await client.ctMessage({
+			text: [ctStatus.messy[messyCollector.values[0]]],
+			type: 'editreply',
+			components: [],
+			ephemeral: true,
+			timeout: 2,
+		}, interaction);
+		if (wetPriority + messyPriority == 0) {
+			await client.ctMessage({
+				text: [ctPriority.nochange],
+				type: 'editreply',
+				components: [],
+				ephemeral: true,
+			}, interaction);
+		}
+		else if (wetPriority + messyPriority > 0 && wetPriority + messyPriority <= 3) {
+			await client.ctMessage({
+				text: [ctPriority.lowpriority],
+				type: 'editreply',
+				components: [],
+				ephemeral: true,
+			}, interaction);
+		}
+		else if (wetPriority + messyPriority >= 4 && wetPriority + messyPriority <= 7) {
+			await client.ctMessage({
+				text: [ctPriority.mediumpriority],
+				type: 'editreply',
+				components: [row3],
+				ephemeral: true,
+			}, interaction);
+		}
+		else if (wetPriority + messyPriority >= 8) {
+			await client.ctMessage({
+				text: [ctPriority.highpriority],
+				type: 'editreply',
+				components: [row3],
+				ephemeral: true,
+			}, interaction);
+		}
+		/*
 			if (shouldChange == false) {
 				await response.edit({
 					files: [attachment],
@@ -160,20 +209,21 @@ module.exports = {
 					files: [attachment],
 					components: [row3],
 					ephemeral: true });
-				const changeCollector = await response.awaitMessageComponent({ filter: changeFilter, time: 60000 });
-				if (changeCollector.customId === 'confirmButton') {
-					attachmentImage = await characterMessage(stringLibrary.Characters.Ralsei.Change.General.changeConfirm, stringLibrary.Characters.Ralsei.Change.General.changeStart.image);
-					attachment = new AttachmentBuilder(attachmentImage, { name: 'changePriority.png' });
-					await response.edit({
-						files: [attachment],
-						ephemeral: true });
-					// Do Change here
-					changeUser(wetCollector.values[0], messyCollector.values[0]);
-				}
-			}
+					*/
+		const changeCollector = await interaction.channel.awaitMessageComponent({ filter: changeFilter, time: 60000 });
+		await changeCollector.deferUpdate();
+		if (changeCollector.customId === 'confirmButton') {
+			await client.ctMessage({
+				text: [ctChange.changeConfirm],
+				type: 'followup',
+				components: [],
+				ephemeral: true,
+				timeout: 2,
+			}, interaction);
+			changeUser(new interaction, client, wetCollector.values[0], messyCollector.values[0]);
 		}
 		else {
-			const userStatus = await database.diapStatus.findOne({ where: { name: user.username } });
+			await database.diapStatus.findOne({ where: { name: user.username } });
 			console.log(user);
 		}
 	},

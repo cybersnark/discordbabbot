@@ -65,13 +65,26 @@
       },
       "Change": {
         "General": {
-          "changeStart": "It looks like it's time for a diaper change! Let's check just to be sure.",
-          "brandSelect": "*Yep, it definitely looks like you need a change, kiddo.*\\n\\n What kind of diaper do you want to wear?",
-          "changeConfirm": "*With the correct changing supplies on hand, Ralsei gives an inviting pat to the changing table* \\n *\"Alright, let's get you changed into a fresh diaper!\"*",
-          "changeDeny": "*Ralsei gives a disappointed look* \\n *\"Aww, are you sure?  You're pretty wet, you know...\"*",
-          "change": "*Ralsei lays you down on the changing table, undoing your diaper and wiping you clean with a baby wipe.  He then lifts your legs up and slides a fresh diaper under you, sprinkling on some baby powder before taping it up snugly.* \\n *\"All done!  You're all clean and dry now!\"*",
-          "changeEnd": "*Ralsei gives a gentle pat to your diapered rear, along with a biiiiiig hug* \\n *\"All done!  Run along now, kiddo!\"*",
-          "title": "__Diaper Change__"
+          "brandSelect": {
+            "text": "*Yep, it definitely looks like you need a change, kiddo.*\\n\\n What kind of diaper do you want to wear?",
+            "image": "./assets/images/charactermessage/Ralsei/ralsei_looking_down_box.png"
+                    },
+          "changeConfirm": {
+            "text":"*With the correct changing supplies on hand, Ralsei gives an inviting pat to the changing table* \\n\\n *Alright, let's get you changed into a fresh diaper!*",
+            "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+          },
+          "changeDeny": {
+            "text": "*Ralsei gives a disappointed look* \\n\\n*Aww, are you sure?  You're pretty wet, you know...*",
+            "image": "./assets/images/charactermessage/Ralsei/ralsei_looking_down_blush_box.png"
+          },
+          "change": {
+            "text": "*Ralsei lays you down on the changing table, undoing your diaper and wiping you clean with a baby wipe.\\nHe then lifts your legs up and slides a fresh diaper under you, sprinkling on some baby powder before taping it up snugly.*\\n\\n*All done!  You're all clean and dry now!*",
+            "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+          },
+          "changeEnd": {
+            "text": "*Ralsei gives a gentle pat to your diapered rear, along with a biiiiiig hug* \\n *\"All done!  Run along now, kiddo!\"*",
+            "image": "./assets/images/charactermessage/Ralsei/ralsei_smile_box.png"
+          }
         },
       "status":{
         "self":{

@@ -8,6 +8,8 @@ module.exports = (client) => {
 		text:text,
 		// The type of message to send.  Can be 'reply', 'editreply', or 'followup'.
 		type:type,
+		// If we're updating a message collector, we can pass the collector here.
+		collector:collector,
 		// Whether the message should be ephemeral or not.  Defaults to false.
 		ephemeral:ephemeral,
 		// The components to add to the message.  Defaults to an empty array.
@@ -20,8 +22,13 @@ module.exports = (client) => {
 		timeout:timeout,
 		// If any parts of a string need to be replaced, we can do this here.  Takes two parameters: the text to replace (i.e. '[name]') and the replacement (i.e. 'Ralsei').
 		replace:replace,
+		// The size of the text.  Defaults to 28px.
+		size:size,
 	}, interaction) {
 		// Since we're loading the JSON key that contains both the .text and .image keys, we need to map through the array to get the data we need.
+		if (size == null) {
+			size = 28;
+		}
 		let textData;
 		let background;
 		text.map((t) => {
@@ -34,6 +41,7 @@ module.exports = (client) => {
 		}
 		// Split the text into an array of strings, separated by newlines.
 		const aryText = textData.split('\\n');
+		console.log(aryText);
 		GlobalFonts.registerFromPath('../font/DeterminationMonoWebRegular-Z5oq.ttf');
 		const canvas = Canvas.createCanvas(909, 270);
 		const context = canvas.getContext('2d');
@@ -44,12 +52,13 @@ module.exports = (client) => {
 		// Instead of using static text sizes, we can also allow ctMesssage to take a text size parameter.  From there, we can use * to denote a larger text size and increase the font size by 4px.
 		for (let i = 0; i < aryText.length; i++) {
 			if (aryText[i].includes('*')) {
-				context.font = '32px Determination Mono Web';
+				context.font = ([size + 4] + 'px Determination Mono Web');
+				console.log(context.font);
 				aryText[i] = aryText[i].replace('*', '');
 				context.fillText(aryText[i], 265, 83 + (i * 32), 603);
 			}
 			else {
-				context.font = '28px Determination Mono Web';
+				context.font = [size], 'px Determination Mono Web';
 				context.fillText(aryText[i], 265, 83 + (i * 28), 603);
 			}
 
@@ -59,6 +68,7 @@ module.exports = (client) => {
 
 		return client.characterMessage({
 			files:[attachmentImage],
+			collector:collector,
 			components:components,
 			type:type,
 			fetchReply:fetchReply,
@@ -69,6 +79,7 @@ module.exports = (client) => {
 
 	// TODO: Should we rename characterMessage to something else?  It's a bit misleading.
 	client.characterMessage = async function({
+		collector:collector,
 		type:type,
 		files:files,
 		ephemeral:ephemeral,
@@ -94,6 +105,21 @@ module.exports = (client) => {
 		}
 		else if (type === 'reply') {
 			return await interaction.reply({
+				files:files,
+				components:components,
+				ephemeral:ephemeral,
+				fetchReply:fetchReply,
+			}).then(async (msg) => {
+				if (timeout !== null) {
+					await wait(timeout * 1000);
+				}
+				if (deleteReply === true) {
+					await interaction.deleteReply();
+				}
+			});
+		}
+		else if (type === 'collector') {
+			return await collector.update({
 				files:files,
 				components:components,
 				ephemeral:ephemeral,
